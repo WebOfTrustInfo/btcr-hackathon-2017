@@ -1,4 +1,8 @@
-## Creating a BTCR DID
+## About
+
+This is my understanding of how BTCR works (with the P2PKH) based on brief discussions. I think I'm missing something because the sequencing questions listed below. Otherwise there are more subtleties to the DDO signing process I'm not aware of. These issues are listed at the end.
+
+## Creating a BTCR DID (P2PKH)
 
 - Create Bitcoin address and private key pair (`B0`/`P0`)
     - This is just for bootstrapping the first tx
@@ -10,7 +14,7 @@
 	- `OP_RETURN` points to `DDO_1`
 	- Output is `B1`
 	- Signing key is `P0`
-- Issue TX, yieling `TXID1`
+- Issue TX, yielsing `TXID1`
 
 At this point we have a DID of the format: 
 ```
@@ -33,3 +37,10 @@ did:btcr:<txid1>
 - Update `DDO_i`, sign with `Pi`
 - Create new tx like above, but send dust amount to `Bi`
 - Sign tx with `P(i-1)`
+
+## Questions
+- Does the sequence of operations imply that the DDO cannot be stored in a content-addressable store?
+    - I thought it's the case that the DDO must contain its DID, but the DID isn't known until the transaction is created. And the transaction must contain the address of the DDO.
+    - This can be worked around if the DDO isn't signed, or if the DID is not in the part of the DDO that is signed
+- The DID Spec recommends that there "should" (not must) be a means for quorum recovery of a DID. We should sketch out this scenario (possible with P2SH?) or make explicit that this is not an option.
+- In the hackathon should we focus on the P2PKH approach, or also a P2SH approach?
