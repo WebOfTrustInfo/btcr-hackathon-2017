@@ -8,6 +8,12 @@ All text is licensed CC-BY, and all code is licensed under the MIT License.
 
 Contributors: Christopher Allen \<@ChristopherA\>, Kim (Hamilton) Duffy \<@kimdhamilton\>
 
+## The Virtual Hackathon July 10th - July 16th 2017
+
+We are having a virtual hackathon starting the week of July 10th to complete a draft specification for BTCR and some initial reference implementations.
+
+We will be using issues in this repository, and the WebOfTrustInfo slack. Christopher Allen \<@ChristopherA\> \<mailto:ChristopherA@LifeWithAlacrity.com\> for more information.
+
 ## Concept
 
 Think of Decentralized Identifiers (DIDs) as personal trust anchors. Anyone can propose a DID method — ideally they leverage the power of blockchains, but a blockchain is not required. There are DID methods being proposed for public blockchains (Bitcoin, Blockstack, Ethereum), private blockchains (Sovrin/Indy), non-blockchain (IPFS), and even legacy web-of-trust identity systems (PGP).
