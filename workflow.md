@@ -1,6 +1,10 @@
 ## About this doc
 
-This is my understanding of how BTCR works (with the P2PKH) based on brief discussions, and I am not sure this understanding is correct. My questions/issues are listed at the end.
+This is my understanding of how BTCR works (with P2PKH) based on brief discussions, but I am not sure this is correct. 
+
+I've not yet looked into the impact of bech32. Would this impact the hackathon?
+
+Questions/issues are listed at the end.
 
 ## Creating a BTCR DID (P2PKH)
 
