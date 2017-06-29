@@ -1,4 +1,4 @@
-## About
+## About this doc
 
 This is my understanding of how BTCR works (with the P2PKH) based on brief discussions. I think I'm missing something because the sequencing questions listed below. Otherwise there are more subtleties to the DDO signing process I'm not aware of. These issues are listed at the end.
 
