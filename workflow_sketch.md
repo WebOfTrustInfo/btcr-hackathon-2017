@@ -48,3 +48,4 @@ did:btcr:<txid1>
     - This can be worked around if the DDO isn't signed, or if the DID is not in the part of the DDO that is signed
 - The DID Spec recommends that there "should" (not must) be a means for quorum recovery of a DID. We should sketch out this scenario (possible with P2SH?) or make explicit that this is not an option.
 - In the hackathon should we focus on the P2PKH approach, or also a P2SH approach?
+- How does Bech32 impact?
