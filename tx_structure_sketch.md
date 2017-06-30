@@ -2,14 +2,19 @@
 
 Draft, in progress
 
+- Bi = bitcoin address i
+- Pi = public key i
+- Si = signing key i
+
 
 ## Creating a BTCR DID (P2PKH, no DDO)
 
-- Create Bitcoin address and private key pair (`B0`/`P0`)
-- Create Bitcoin address and private key pair (`B1`/`P1`)
+
+- Create key set (`B0`/`P0`/`S0`)
+- Create key set (`B1`/`P1`/`S1`)
 - Create Bitcoin transaction as follows:
 	- Output is `B1`
-	- Signing key is `P0`
+	- Signing key is `S0`
 - Issue TX, yielding bech32 encoded txid `BECH32_TXID_0`
 
 At this point we have a DID of the format: 
@@ -28,8 +33,8 @@ did:btcr:<BECH32_TXID_0>
 
 ## Rotating keys
 
-- Create new tx like above, but send to to `B2`
-- Sign tx with `P1`
+- Create new tx like above, but send to `B2`
+- Sign tx with `S1` (P1 is revealed)
 
 ## Questions
 - If a DDO is used, how can it be stored in a content-addressable store?
