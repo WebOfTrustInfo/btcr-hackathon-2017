@@ -33,8 +33,12 @@ A secondary intent of the BTCR method is to serve as a very conservative, very s
 Some aspects of the BTCR method will not be practical if inappropriately scaled — for instance, there is a transaction cost to update keys and DDO object, potential UTXO inflation (i.e. one additional unspent output for every BTCR-based identity), and even if segwit isn't used it could cause blockchain bloat. However, identities using the BTCR method can be a strong as Bitcoin itself -- currently securing billions of dollars of digital value.
 
 ## References
-- [DID Method Specifications / BTCR and PGPR](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-spring2017/blob/master/event-documents/group-abstracts/btcr-did-method-spec.md)
-- [DID Spec](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-fall2016/blob/master/draft-documents/DID-Spec-Implementers-Draft-01.pdf)
+- [DID (Decentralized Identifier) Data Model and Generic Syntax 1.0 Implementer’s Draft 01](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-fall2016/blob/master/draft-documents/DID-Spec-Implementers-Draft-01.pdf)
+- [DID Method Specifications / BTCR and PGPR](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-spring2017/blob/master/event-documents/group-abstracts/btcr-did-method-spec.md) (only outline so far)
+- txref — Bech32 encoding of bitcoin transactions
+    - Original proposal: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-May/014396.html
+    - BIP draft: https://github.com/veleslavs/bips/blob/Bech32_Encoded_TxRef/bip-XXXX-Bech32_Encoded_Transaction_Postion_References.mediawiki
+    - Reference code: [https://github.com/jonasschnelli/bitcoin_txref_code](https://github.com/jonasschnelli/bitcoin_txref_code)
 - Bech32
-    - https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-May/014396.html
-    - https://github.com/veleslavs/bips/blob/Bech32_Encoded_TxRef/bip-XXXX-Bech32_Encoded_Transaction_Postion_References.mediawiki
+    - BIP 173: https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki
+    - Reference code: https://github.com/sipa/bech32
