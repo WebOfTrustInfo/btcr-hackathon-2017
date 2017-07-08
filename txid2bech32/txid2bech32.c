@@ -27,6 +27,8 @@ int main(int argc, char *argv[]) {
   json_t *lu_response = NULL;
   json_t *lu_result = NULL;
 
+  const char *converted_error;
+  
   bitcoinrpc_global_init();
 
   /* 2. Startup the RPC client */
@@ -66,6 +68,15 @@ int main(int argc, char *argv[]) {
     }
 
     lu_response = bitcoinrpc_resp_get (btcresponse);
+
+    if (json_is_null(lu_result)) {
+
+      printf("Error: getblockchaininfo\n");
+      printf ("%s\n", json_dumps (lu_response, JSON_INDENT(2)));
+      exit(-1);
+      
+    }
+    
     lu_result = json_object_get(lu_response,"result");
 
     int testnet = 0;
@@ -118,6 +129,14 @@ int main(int argc, char *argv[]) {
     lu_response = bitcoinrpc_resp_get (btcresponse);
     lu_result = json_object_get(lu_response,"result");
 
+    if (json_is_null(lu_result)) {
+
+      printf("Error: gettransaction\n");
+      printf ("%s\n", json_dumps (lu_response, JSON_INDENT(2)));
+      exit(-1);
+      
+    }
+    
     json_t *lu_hash = NULL;
     const char *blockhash = 0;    
     lu_hash = json_object_get(lu_result,"blockhash");
@@ -167,6 +186,15 @@ int main(int argc, char *argv[]) {
     lu_response = bitcoinrpc_resp_get (btcresponse);
     lu_result = json_object_get(lu_response,"result");
 
+    if (json_is_null(lu_result)) {
+
+      printf("Error: getblock\n");
+      printf ("%s\n", json_dumps (lu_response, JSON_INDENT(2)));
+      exit(-1);
+      
+    }
+    
+
     json_t *lu_height = NULL;
     int blockheight = 0;
     lu_height = json_object_get(lu_result,"height");
@@ -197,6 +225,17 @@ int main(int argc, char *argv[]) {
     success = btc_txref_encode(encoded_txref, MAGIC_BTC_TESTNET, blockheight,blockindex);
 
     printf("%s\n",encoded_txref);
+
+    json_decref(lu_result);
+    json_decref(lu_response);
+    bitcoinrpc_method_free(rpc_method);
     
+  } else {
+
+    printf("ERROR: Failed to connect to server!\n");
+
   }
+
+  bitcoinrpc_cl_free(rpc_client);
+  bitcoinrpc_global_cleanup();
 }
