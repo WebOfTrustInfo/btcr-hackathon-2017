@@ -253,8 +253,11 @@ int main(int argc, char *argv[]) {
 
     int success = 0;
 
-    success = btc_txref_encode(encoded_txref, MAGIC_BTC_TESTNET, blockheight,blockindex);
-
+    if (testnet) {
+      success = btc_txref_encode(encoded_txref, MAGIC_BTC_TESTNET, blockheight,blockindex);
+    } else {
+      success = btc_txref_encode(encoded_txref, MAGIC_BTC_MAINNET, blockheight,blockindex);
+    }
     printf("%s\n",encoded_txref);
 
     json_decref(lu_result);
