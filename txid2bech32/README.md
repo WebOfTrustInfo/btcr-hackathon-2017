@@ -1,8 +1,16 @@
 # TXID to Bech32 Converter
 
-This program is run as `txid2bech32 [txid]` and will output the Bech32. It uses this [Bech 32 code](https://github.com/jonasschnelli/bitcoin_txref_code), which is already included here.
+> This program has not been fully tested — no guarantees it's bug-free!
+>
+> In particular it needs to be tested against known transactions to make sure the bech32 that comes out is correct, but we don't have a mainnet full node with —txindex up on Debian yet. All the test vectors are for mainnet, and we are using testnet.
 
-To run it you must have `libbitcoinrpc` setup. These instructions are taken from the [Blockstream Bitcoin doc](https://github.com/ChristopherA/Learning-Bitcoin-from-the-Command-Line/blob/master/12_2_Accessing_Bitcoind_with_C.md).
+This C program is run as `txid2bech32 [txid]` and given a valid bitcoin transaction id (aka `txid`) will output a txref which we will be using in our DID:BTCR proposal. The program will call bitcoind via RPC, confirm that the `txid` is valid & confirmed, and retreive information about that transaction as to encode it as a `txref`.
+
+A `txref` is Bech32 value encoded as per this BIP proposal [BIP XXXX: Bech32 Encoded Transaction Postion References](https://github.com/veleslavs/bips/blob/Bech32_Encoded_TxRef/bip-XXXX-Bech32_Encoded_Transaction_Postion_References.mediawiki) by @velesavs. The txref proposal uses this code from https://github.com/jonasschnelli/bitcoin_txref_code by @jonasschnelli, which in turn uses [Bech32](https://github.com/sipa/bech32) code from @sipa — all of the required files are included here.
+
+To run it you must have `bitcoind` installed as a full node with `—txindex` turned on — on the bitcoin mainnet this will take up about 167GB as of today, or on the testnet 13GB. The remaining text here is in regard to using this code with a testnet node. To install testnet on a cheap linode debian linux instance (first month free, $5 a month thereafter), see [Setting Up a Bitcoin-Core VPS with StackScript](https://github.com/ChristopherA/Learning-Bitcoin-from-the-Command-Line/blob/master/02_2_Setting_Up_a_Bitcoin-Core_VPS_with_StackScript.md).
+
+This doc also assumes that you have installed bitcoind on a Debian or Ubuntu-based linux. It requires  `libbitcoinrpc` to be setup. The instructions below on installing `libbitcoinrpc` taken from an early draft tutorial [Learning-Bitcoin-from-the-Command-Line](https://github.com/ChristopherA/Learning-Bitcoin-from-the-Command-Line/) sponsored by Blockstream, from section [12.2_Accessing Bitcoind with C](https://github.com/ChristopherA/Learning-Bitcoin-from-the-Command-Line/blob/master/12_2_Accessing_Bitcoind_with_C.md).
 
 ## Set Up libbitcoinrpc
 
@@ -39,6 +47,9 @@ $ sudo make install
 ```
 
 ## Compile txid2bech32
+
+You'll first need to change the RPC user and password in the `txid2bech32.c` file to what is defined in your `bitcoin.conf`. Then…
+
 ```
 $ cc txid2bech32.c txref_code.c segwit_addr.c -lbitcoinrpc -ljansson -o txid2bech32
 ```
