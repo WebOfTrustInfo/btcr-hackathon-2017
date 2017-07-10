@@ -6,15 +6,27 @@ All content in this repository is copyright by the contributors.
 
 All text is licensed CC-BY, and all code is licensed under the MIT License.
 
-Contributors: Christopher Allen \<@ChristopherA\>, Kim (Hamilton) Duffy \<@kimdhamilton\>
+Contributors: Christopher Allen \<@ChristopherA\>, Kim (Hamilton) Duffy \<@kimdhamilton\>, Shannon Appelcline \<@shannona\>
 
 ## The Virtual Hackathon July 10th - July 16th 2017
 
 We are having a virtual hackathon starting the week of July 10th to complete a draft specification for BTCR and some initial reference implementations.
 
-We will be using issues in this repository, and the WebOfTrustInfo slack. Christopher Allen \<@ChristopherA\> \<mailto:ChristopherA@LifeWithAlacrity.com\> for more information.
+We will be using  [Issues](https://github.com/WebOfTrustInfo/btcr-hackathon/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) in this repository and the [WebOfTrustInfo slack](http://weboftrustinfo.slack.com). Copntact Christopher Allen \<@ChristopherA\> \<mailto:ChristopherA@LifeWithAlacrity.com\> for more information.
 
-## Concept
+## \#RebootingWebOfTrust Design Shop in Boston October 3rd-5th
+
+This virtual hackathon is to help prepare us for our face-to-face #RebootingWebOfTrust  Design Shop in Boston on October 3rd - 5th. Don't forget  to [register]() before the early-bird pricing expires! Discounts are available for those who actively participate in this hackathon, or who submit topic papers to our repo before the event. Diversity scholarships are also available (though we would like sponsors so we can offer more!)
+
+## User Story
+
+Why are we #RebootingWebOfTrust? Here is a user story about a female programmer that is a daughter of immigrants who has a family members that are refugees. Can we give her the tools she needs? 
+
+- [\#RebootingWebOfTrust User Story](./RWOT-User-Story.md) 
+
+## Initial Concept
+
+(*Note that the concept below is very preliminary. There are many legitimate [Issues](https://github.com/WebOfTrustInfo/btcr-hackathon/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) being discussed. This concept is shared only to help start the conversion!*)
 
 Think of Decentralized Identifiers (DIDs) as personal trust anchors. Anyone can propose a DID method — ideally they leverage the power of blockchains, but a blockchain is not required. There are DID methods being proposed for public blockchains (Bitcoin, Blockstack, Ethereum), private blockchains (Sovrin/Indy), non-blockchain (IPFS), and even legacy web-of-trust identity systems (PGP).
 
@@ -33,7 +45,6 @@ A secondary intent of the BTCR method is to serve as a very conservative, very s
 Some aspects of the BTCR method will not be practical if inappropriately scaled — for instance, there is a transaction cost to update keys and DDO object, potential UTXO inflation (i.e. one additional unspent output for every BTCR-based identity), and even if segwit isn't used it could cause blockchain bloat. However, identities using the BTCR method can be a strong as Bitcoin itself -- currently securing billions of dollars of digital value.
 
 ## References
-- [\#RebootingWebOfTrust User Story](./RWOT-User-Story.md)
 - [DID (Decentralized Identifier) Data Model and Generic Syntax 1.0 Implementer’s Draft 01](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-fall2016/blob/master/draft-documents/DID-Spec-Implementers-Draft-01.pdf)
 - [DID Method Specifications / BTCR and PGPR](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-spring2017/blob/master/event-documents/group-abstracts/btcr-did-method-spec.md) (only outline so far)
 - txref — Bech32 encoding of bitcoin transactions
