@@ -22,3 +22,5 @@ However, the winds of populism are blowing. **Alice** has personally heard more 
 
 Our use case will show how **Alice** meets **Bob** anonymously to offer help with his project. How Alice is able to demonstrate and share a positive reputation for her quality work. How **Carol** is able to use **Alice’s** software to protect herself from harm in a third-world country. How **Ted** is able to review **Bob’s** ideas and **Alice’s** work, and offer some funding to help both. How **Alice** is able to increase her reputation in her anonymously developed software to the point where she is offered a job at **Ted’s** company that pays more than her job at a conservative bank. How **Alice** is able to selectively revoke parts of her anonymity to establish her personal reputation her peers and selective colleagues, without at any time putting **Carol** and her other advocacy clients at risk.
 
+*(**Alice's** story continues, along with some technical details, in [Issue 33](https://github.com/WebOfTrustInfo/btcr-hackathon/issues/33))*
+
