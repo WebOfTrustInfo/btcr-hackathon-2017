@@ -1,0 +1,7 @@
+*/*/.idea/*
+*/*/*.ini*
+
+*/*/node_modules/*
+
+bundle*.js
+.babel*
