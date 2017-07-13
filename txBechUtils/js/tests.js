@@ -32,14 +32,29 @@ describe('Bech32 TX', function() {
       expect(result).to.equal("tx1-rjk0-u5ng-4jsf-mc");
       done();
     });
-  });
+  }); //https://live.blockcypher.com/btc/block/466793/2205
 
   describe('end-to-end', function () {
+    /*
     it('fetches tx ref and encodes testnet', function (done) {
       setTimeout(function () {
-        index.txidToBech32(index.MAGIC_BTC_TESTNET, "f8cdaff3ebd9e862ed5885f8975489090595abe1470397f79780ead1c7528107")
+        index.txidToBech32("f8cdaff3ebd9e862ed5885f8975489090595abe1470397f79780ead1c7528107", "testnet")
           .then(result => {
             expect(result).to.equal("tx1-xxyv-xxxx-fpmf-u0");
+            done();
+          }, error => {
+            console.error(error);
+            done(err);
+          });
+      });
+    }, 5000);*/
+
+    it('fetches tx ref and encodes mainnet', function (done) {
+      setTimeout(function () {
+        //467,883 / 2,355
+        index.txidToBech32("016b71d9ec62709656504f1282bb81f7acf998df025e54bd68ea33129d8a425b", "mainnet")
+          .then(result => {
+            expect(result).to.equal("tx1-rk63-uvxf-9pqc-sy");
             done();
           }, error => {
             console.error(error);

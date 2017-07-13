@@ -18,6 +18,7 @@
   },
   "scripts": {
     "test": "mocha --compilers js:babel-core/register test*.js",
+    "build": "browserify index.js --s BtcrUtils -t [ babelify --presets [ es2015 ] ] -o btcr_converter.js",
     "uglify": "uglifyjs bundle.js --compress --mangle --output index.js"
   },
   "author": "Kim Duffy",

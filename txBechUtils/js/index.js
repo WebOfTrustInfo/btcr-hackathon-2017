@@ -25,6 +25,7 @@ let request = obj => {
     });
 
     request.open('GET', obj.url);
+    request.responseType = "json";
     request.send();
   });
 };
@@ -57,7 +58,15 @@ var txRefEncode = function (magic, blockHeight, txPos) {
 };
 
 
-var txidToBech32 = function (chain, txId) {
+var txidToBech32 = function (txId, chainName) {
+
+  var chain = null;
+  if (chainName === "mainnet") {
+    chain = bitcoin.networks.bitcoin;
+  } else {
+    chain = bitcoin.networks.testnet;
+  }
+
   var theUrl;
   if (chain === bitcoin.networks.bitcoin) {
     theUrl = `https://api.blockcypher.com/v1/btc/main/txs/${txId}?limit=500`;
@@ -68,16 +77,17 @@ var txidToBech32 = function (chain, txId) {
   return request({url: theUrl})
     .then(data => {
       let txData = JSON.parse(data);
-      let blockHeight = txData.block_height.toString(16);
-      let txPos = parseInt(txData.block_index.toString(16));
+      let blockHeight = txData.block_height;
+      let txPos = txData.block_index;
 
-      let magic = theChain === bitcoin.networks.bitcoin ? MAGIC_BTC_MAINNET : MAGIC_BTC_TESTNET;
+      let magic = chain === bitcoin.networks.bitcoin ? MAGIC_BTC_MAINNET : MAGIC_BTC_TESTNET;
       var result = txRefEncode(magic, blockHeight, txPos);
       return result
     },error => {
       console.error(error);
     });
 }
+
 
 function scrollBlock (theUrl, pos, txStart, currentMaxHeight, resolve) {
   request({url: theUrl + "?txstart=" + txStart +  "&limit=500"})
@@ -92,7 +102,7 @@ function scrollBlock (theUrl, pos, txStart, currentMaxHeight, resolve) {
           let posTemp = pos - currentMaxHeight;
           console.log(txids[posTemp - 1]);
           console.log(txids[posTemp]);
-          result = txids[pos - currentMaxHeight];
+          let result = txids[pos - currentMaxHeight];
           resolve(result);
         }
       });
