@@ -1,9 +1,7 @@
 #include <jansson.h>
 #include <bitcoinrpc.h>
 #include <string.h>
-
-#define MAGIC_BTC_MAINNET 0x03
-#define MAGIC_BTC_TESTNET 0x06
+#include "txref_code.h"
 
 int main(int argc, char *argv[]) {
 
@@ -249,17 +247,37 @@ int main(int argc, char *argv[]) {
 
     /* 6. Finally, do the conversion! */
 
-    char encoded_txref[22] = {};
-
     int success = 0;
 
-    if (testnet) {
-      success = btc_txref_encode(encoded_txref, MAGIC_BTC_TESTNET, blockheight,blockindex);
-    } else {
-      success = btc_txref_encode(encoded_txref, MAGIC_BTC_MAINNET, blockheight,blockindex);
-    }
-    printf("%s\n",encoded_txref);
+    printf("Txid: %s\n",tx_id);
 
+    char encoded_txref[32];
+    memset(encoded_txref, 0, sizeof(encoded_txref));
+    
+    printf("Height: %i\n",blockheight);
+    printf("Position: %i\n",blockindex);
+
+    if (testnet) {
+
+
+      success = btc_txref_encode(encoded_txref, TXREF_BECH32_HRP_TESTNET, TXREF_MAGIC_BTC_TESTNET,blockheight,blockindex,1);
+
+      printf("Network: testnet3\n");
+      printf("HRP: %s\n",TXREF_BECH32_HRP_TESTNET);
+      printf("Magic: %c\n",TXREF_MAGIC_BTC_TESTNET);
+      printf("Non-Standard: 1\n");
+
+    } else {
+
+      success = btc_txref_encode(encoded_txref, "tx",0x03, blockheight,blockindex,0);
+
+      printf("Network: mainnet\n");
+      
+    }
+
+    printf("Txref: %s\n",encoded_txref);
+
+    
     json_decref(lu_result);
     json_decref(lu_response);
     bitcoinrpc_method_free(rpc_method);
