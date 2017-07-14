@@ -58,37 +58,6 @@ var txRefEncode = function (magic, blockHeight, txPos) {
 };
 
 
-var txidToBech32 = function (txId, chainName) {
-
-  var chain = null;
-  if (chainName === "mainnet") {
-    chain = bitcoin.networks.bitcoin;
-  } else {
-    chain = bitcoin.networks.testnet;
-  }
-
-  var theUrl;
-  if (chain === bitcoin.networks.bitcoin) {
-    theUrl = `https://api.blockcypher.com/v1/btc/main/txs/${txId}?limit=500`;
-  } else {
-    theUrl = `https://api.blockcypher.com/v1/btc/test3/txs/${txId}?limit=500`;
-  }
-
-  return request({url: theUrl})
-    .then(data => {
-      let txData = JSON.parse(data);
-      let blockHeight = txData.block_height;
-      let txPos = txData.block_index;
-
-      let magic = chain === bitcoin.networks.bitcoin ? MAGIC_BTC_MAINNET : MAGIC_BTC_TESTNET;
-      var result = txRefEncode(magic, blockHeight, txPos);
-      return result
-    },error => {
-      console.error(error);
-    });
-}
-
-
 function scrollBlock (theUrl, pos, txStart, currentMaxHeight, resolve) {
   request({url: theUrl + "?txstart=" + txStart +  "&limit=500"})
     .then(data => {
@@ -108,6 +77,66 @@ function scrollBlock (theUrl, pos, txStart, currentMaxHeight, resolve) {
       });
 }
 
+function getTxDetails(txId, chainName) {
+  var chain = null;
+  if (chainName === "mainnet") {
+    chain = bitcoin.networks.bitcoin;
+  } else {
+    chain = bitcoin.networks.testnet;
+  }
+
+  var theUrl;
+  if (chain === bitcoin.networks.bitcoin) {
+    theUrl = `https://api.blockcypher.com/v1/btc/main/txs/${txId}?limit=500`;
+  } else {
+    theUrl = `https://api.blockcypher.com/v1/btc/test3/txs/${txId}?limit=500`;
+  }
+
+  return request({url: theUrl})
+    .then(data => {
+      let txData = JSON.parse(data);
+      let blockHeight = txData.block_height;
+      let txPos = txData.block_index;
+      let inputs = txData.inputs.map((x) => {
+        return {"script": x.script, "addresses": x.addresses, "outputValue": x.output_value};
+      });
+      let outputs = txData.outputs.map((x) => {
+        if (x.value === 0) {
+          return {"script": x.script, "data": x.data_string};
+        }
+        return {"script": x.script, "addresses": x.addresses, "outputValue": x.value};
+      })
+      return {
+        "blockHeight": blockHeight,
+        "blockIndex": txPos,
+        "txReceived": txData.received,
+        "txConfirmed": txData.confirmed,
+        "numConfirmations": txData.confirmations,
+        "inputs": inputs,
+        "outputs": outputs
+      };
+    },error => {
+      console.error(error);
+    });
+}
+
+
+var txidToBech32 = function (txId, chainName) {
+  var chain = null;
+  if (chainName === "mainnet") {
+    chain = bitcoin.networks.bitcoin;
+  } else {
+    chain = bitcoin.networks.testnet;
+  }
+  return getTxDetails(txId, chainName)
+    .then(data => {
+      let magic = chain === bitcoin.networks.bitcoin ? MAGIC_BTC_MAINNET : MAGIC_BTC_TESTNET;
+      var result = txRefEncode(magic, data.blockHeight, data.blockIndex);
+      return result
+    },error => {
+      console.error(error);
+    });
+}
 
 var bech32ToTxid = function (bech32Tx) {
 
@@ -155,6 +184,12 @@ module.exports = {
   txRefEncode: txRefEncode,
   txidToBech32: txidToBech32,
   bech32ToTxid: bech32ToTxid,
+  getTxDetails: getTxDetails,
   MAGIC_BTC_MAINNET: MAGIC_BTC_MAINNET,
   MAGIC_BTC_TESTNET: MAGIC_BTC_TESTNET
 };
+
+getTxDetails("f8cdaff3ebd9e862ed5885f8975489090595abe1470397f79780ead1c7528107", "testnet").then( result => {
+  console.log(result);
+}
+)

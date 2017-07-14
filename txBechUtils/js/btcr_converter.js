@@ -172,8 +172,25 @@ var txRefEncode = function txRefEncode(magic, blockHeight, txPos) {
   return finalResult;
 };
 
-var txidToBech32 = function txidToBech32(txId, chainName) {
+function scrollBlock(theUrl, pos, txStart, currentMaxHeight, resolve) {
+  request({ url: theUrl + "?txstart=" + txStart + "&limit=500" }).then(function (data) {
+    var blockData = JSON.parse(data);
+    var txids = blockData.txids;
+    if (currentMaxHeight + txids.length < pos) {
+      txStart = txids[txids.length - 1];
+      currentMaxHeight += txids.length;
+      scrollBlock(theUrl, pos, txStart, currentMaxHeight, resolve);
+    } else {
+      var posTemp = pos - currentMaxHeight;
+      console.log(txids[posTemp - 1]);
+      console.log(txids[posTemp]);
+      var result = txids[pos - currentMaxHeight];
+      resolve(result);
+    }
+  });
+}
 
+function getTxDetails(txId, chainName) {
   var chain = null;
   if (chainName === "mainnet") {
     chain = bitcoin.networks.bitcoin;
@@ -192,32 +209,44 @@ var txidToBech32 = function txidToBech32(txId, chainName) {
     var txData = JSON.parse(data);
     var blockHeight = txData.block_height;
     var txPos = txData.block_index;
+    var inputs = txData.inputs.map(function (x) {
+      return { "script": x.script, "addresses": x.addresses, "outputValue": x.output_value };
+    });
+    var outputs = txData.outputs.map(function (x) {
+      if (x.value === 0) {
+        return { "script": x.script, "data": x.data_string };
+      }
+      return { "script": x.script, "addresses": x.addresses, "outputValue": x.value };
+    });
+    return {
+      "blockHeight": blockHeight,
+      "blockIndex": txPos,
+      "txReceived": txData.received,
+      "txConfirmed": txData.confirmed,
+      "numConfirmations": txData.confirmations,
+      "inputs": inputs,
+      "outputs": outputs
+    };
+  }, function (error) {
+    console.error(error);
+  });
+}
 
+var txidToBech32 = function txidToBech32(txId, chainName) {
+  var chain = null;
+  if (chainName === "mainnet") {
+    chain = bitcoin.networks.bitcoin;
+  } else {
+    chain = bitcoin.networks.testnet;
+  }
+  return getTxDetails(txId, chainName).then(function (data) {
     var magic = chain === bitcoin.networks.bitcoin ? MAGIC_BTC_MAINNET : MAGIC_BTC_TESTNET;
-    var result = txRefEncode(magic, blockHeight, txPos);
+    var result = txRefEncode(magic, data.blockHeight, data.blockIndex);
     return result;
   }, function (error) {
     console.error(error);
   });
 };
-
-function scrollBlock(theUrl, pos, txStart, currentMaxHeight, resolve) {
-  request({ url: theUrl + "?txstart=" + txStart + "&limit=500" }).then(function (data) {
-    var blockData = JSON.parse(data);
-    var txids = blockData.txids;
-    if (currentMaxHeight + txids.length < pos) {
-      txStart = txids[txids.length - 1];
-      currentMaxHeight += txids.length;
-      scrollBlock(theUrl, pos, txStart, currentMaxHeight, resolve);
-    } else {
-      var posTemp = pos - currentMaxHeight;
-      console.log(txids[posTemp - 1]);
-      console.log(txids[posTemp]);
-      var result = txids[pos - currentMaxHeight];
-      resolve(result);
-    }
-  });
-}
 
 var bech32ToTxid = function bech32ToTxid(bech32Tx) {
 
@@ -260,9 +289,14 @@ module.exports = {
   txRefEncode: txRefEncode,
   txidToBech32: txidToBech32,
   bech32ToTxid: bech32ToTxid,
+  getTxDetails: getTxDetails,
   MAGIC_BTC_MAINNET: MAGIC_BTC_MAINNET,
   MAGIC_BTC_TESTNET: MAGIC_BTC_TESTNET
 };
+
+getTxDetails("f8cdaff3ebd9e862ed5885f8975489090595abe1470397f79780ead1c7528107", "testnet").then(function (result) {
+  console.log(result);
+});
 
 },{"./bech32":1,"bitcoinjs-lib":19,"xmlhttprequest":104}],3:[function(require,module,exports){
 (function (global){
