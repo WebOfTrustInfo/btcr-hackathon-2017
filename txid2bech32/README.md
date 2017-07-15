@@ -51,8 +51,9 @@ $ sudo make install
 You'll first need to change the RPC user and password in the `txid2bech32.c` file to what is defined in your `bitcoin.conf`. Then…
 
 ```
-$ cc txid2bech32.c txref_code.c segwit_addr.c -lbitcoinrpc -ljansson -o txid2bech32
+$ cc -O2 txid2bech32.c txref_code.c segwit_addr.c -lbitcoinrpc -ljansson -o txid2bech32
 ```
+Note the `-O2` argument. It is _crucially_ important. At last check, an inconsistency in `txref_code.c` caused it to produce different, incorrect results if it was not compiled optimized.
 
 ### Run txid2bech32
 
