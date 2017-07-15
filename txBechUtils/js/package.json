@@ -2,24 +2,19 @@
   "name": "tx_bech_utils",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "txrefConverter.js",
   "dependencies": {
-    "bigi": "^1.4.2",
-    "bitcoinjs-lib": "^2.3.0",
-    "bs58": "^3.0.0",
     "buffer": "^5.0.1",
     "chai": "^3.5.0",
-    "ecurve": "^1.0.4",
     "jsonld": "^0.4.11",
     "mocha": "^3.2.0",
-    "sha256": "^0.2.0",
     "verror": "^1.9.0",
     "xmlhttprequest": "^1.8.0"
   },
   "scripts": {
     "test": "mocha --compilers js:babel-core/register test*.js",
-    "build": "browserify index.js --s BtcrUtils -t [ babelify --presets [ es2015 ] ] -o btcr_converter.js",
-    "uglify": "uglifyjs bundle.js --compress --mangle --output index.js"
+    "build": "browserify txrefConverter.js --s BtcrUtils -t [ babelify --presets [ es2015 ] ] -o txrefConverter-browserified.js",
+    "uglify": "uglifyjs bundle.js --compress --mangle --output txrefConverter.js"
   },
   "author": "Kim Duffy",
   "license": "MIT",
