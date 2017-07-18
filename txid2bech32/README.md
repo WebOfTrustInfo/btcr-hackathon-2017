@@ -18,7 +18,7 @@ To use `libbitcoinrpc`, you need to install a basic C setup and the dependent pa
 ```
 $ sudo apt-get install make gcc libcurl4-openssl-dev libjansson-dev uuid-dev
 ```
-You can then download [libbitcoinrpc from Github](https://github.com/gitmarek/libbitcoinrpc/blob/master/README.md). Clone it or grab a zip file, as you prefer.
+You can then download [libbitcoinrpc from Github](https://github.com/gitmarek/libbitcoinrpc/blob/master). Clone it or grab a zip file, as you prefer.
 ```
 $ sudo apt-get unzip
 $ unzip libbitcoinrpc-master.zip 
