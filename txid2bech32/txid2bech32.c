@@ -203,9 +203,9 @@ int main(int argc, char *argv[]) {
 
     /* SHOULD THIS BE LARGER? */
     
-    if (confirmations < 2) {
+    if (confirmations < 6) {
 
-      printf("Error: Insufficient confirmations (%i) for block!",confirmations);
+      printf("Error: 6 confirmations are required for txref (only %i).",confirmations);
       exit(-1);
 
     }
@@ -249,39 +249,53 @@ int main(int argc, char *argv[]) {
 
     int success = 0;
 
-    printf("Txid: %s\n",tx_id);
+    if (confirmations < 100) {
+      printf("Warning: only %i confirmations\n",confirmations);
+    }
 
-    char encoded_txref[32];
-    memset(encoded_txref, 0, sizeof(encoded_txref));
+    char *hrp;
+    if (testnet) {
+      hrp = malloc(sizeof(TXREF_BECH32_HRP_TESTNET));
+      strcpy(hrp,TXREF_BECH32_HRP_TESTNET);
+    } else {
+      hrp = malloc(sizeof(TXREF_BECH32_HRP_MAINNET));
+      strcpy(hrp,TXREF_BECH32_HRP_MAINNET);
+    }
     
-    printf("Height: %i\n",blockheight);
-    printf("Position: %i\n",blockindex);
+    char encoded_txref[22+strlen(hrp)];
+    memset(encoded_txref, 0, sizeof(encoded_txref));
+
+    json_t *final_output = NULL;
+    final_output = json_object();
+
+    json_object_set_new(final_output,"txid",json_string(tx_id));
 
     if (testnet) {
 
 
-      success = btc_txref_encode(encoded_txref, TXREF_BECH32_HRP_TESTNET, TXREF_MAGIC_BTC_TESTNET,blockheight,blockindex,1);
+      success = btc_txref_encode(encoded_txref, hrp, TXREF_MAGIC_BTC_TESTNET, blockheight, blockindex, 1);
 
-      printf("Network: testnet3\n");
-      printf("HRP: %s\n",TXREF_BECH32_HRP_TESTNET);
-      printf("Magic: %c\n",TXREF_MAGIC_BTC_TESTNET);
-      printf("Non-Standard: 1\n");
+      json_object_set_new(final_output,"network",json_string("testnet3"));
 
     } else {
 
-      success = btc_txref_encode(encoded_txref, "tx",0x03, blockheight,blockindex,0);
+      success = btc_txref_encode(encoded_txref, hrp, TXREF_MAGIC_BTC_MAINNET, blockheight,blockindex,0);
 
-      printf("Network: mainnet\n");
+      json_object_set_new(final_output,"network",json_string("mainnet"));
       
     }
 
-    printf("Txref: %s\n",encoded_txref);
+    json_object_set_new(final_output,"height",json_integer(blockheight));
+    json_object_set_new(final_output,"position",json_integer(blockindex));    
+    json_object_set_new(final_output,"txref",json_string(encoded_txref));
 
-    
+    printf ("%s\n", json_dumps (final_output, JSON_PRESERVE_ORDER|JSON_INDENT(2)));
+
+    json_decref(final_output);
     json_decref(lu_result);
     json_decref(lu_response);
     bitcoinrpc_method_free(rpc_method);
-    
+
   } else {
 
     printf("ERROR: Failed to connect to server!\n");
@@ -290,4 +304,5 @@ int main(int argc, char *argv[]) {
 
   bitcoinrpc_cl_free(rpc_client);
   bitcoinrpc_global_cleanup();
+
 }
