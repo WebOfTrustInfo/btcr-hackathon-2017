@@ -66,6 +66,7 @@ $ ./txid2bech32 f8cdaff3ebd9e862ed5885f8975489090595abe1470397f79780ead1c7528107
   "position": 1,
   "txref": "txtest1-xyv2-xzyq-qqm5-tyke"
 }
-$ ./txid2bech32 f8cdaff3ebd9e862ed5885f8975489090595abe1470397f79780ead1c7528107 | jq '.txref'
-"txtest1-xyv2-xzyq-qqm5-tyke"
+
+$ ./txid2bech32 f8cdaff3ebd9e862ed5885f8975489090595abe1470397f79780ead1c7528107 | jq -r '.txref'
+txtest1-xyv2-xzyq-qqm5-tyke
 ```
