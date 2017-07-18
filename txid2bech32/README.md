@@ -58,6 +58,12 @@ Note the `-O2` argument. It is _crucially_ important. At last check, an inconsis
 ### Run txid2bech32
 
 ```
-$ ./txid2bech32 145035db5b738b492198835bb813aeab58eb00891988f9bf73edde8fa1a2f05f
-tx1-xx2j-xzxz-ygry-j9
+$ ./txid2bech32 f8cdaff3ebd9e862ed5885f8975489090595abe1470397f79780ead1c7528107
+{
+  "Txid": "f8cdaff3ebd9e862ed5885f8975489090595abe1470397f79780ead1c7528107",
+  "Network": "testnet3",
+  "Height": 1152194,
+  "Position": 1,
+  "Txref": "txtest1-xyv2-xzyq-qqm5-tyke"
+}
 ```
