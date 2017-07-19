@@ -1,0 +1,76 @@
+// [rgrant 20170718 08:19 MST] graphviz exploration of DID:BTCR state diagram / simple: no recovery mechanism
+
+// dot -Tpng btcr-state-diagram-simple.dot  > btcr-state-diagram-simple.png && open btcr-state-diagram-simple.png
+
+digraph self_sovereign_btcr_state_diagram {
+  pad="1,1" //i.e. margin
+
+  init [
+    label = "DID init \n (also using revocation proof)"
+    shape = circle
+    label = "state: init."
+    layer = "all:simple:recovery"
+  ]
+
+  valid_simple [
+    label = "state: valid Simple DID"
+    shape=doublecircle
+    color=green
+    layer = "all:simple:recovery"
+  ]
+
+  revoked [
+    shape = doubleoctagon
+    color=red
+    label = "state: revoked!"
+    layer = "all:simple:recovery"
+  ]
+
+  subgraph cluster_theft {
+    label="Key Compromise / Theft"
+
+    tx_theft_A0 [
+      label = "TX: noncompliant BTC theft A0"
+      shape=box
+      color=red
+      layer = "all:simple:recovery"
+    ]
+
+    tx_theft_A1 [
+      label = "TX: compliant DID theft A1"
+      shape=box
+      color=red
+      layer = "all:simple:recovery"
+    ]
+
+  }
+ 
+  tx_revocation [
+    label = "TX: immediate revocation"
+    shape=box
+    color=orange
+    layer = "all:simple:recovery"
+  ]
+
+  tx_simple_update [
+    label = "TX: simplest compliant update"
+    shape=box
+    layer = "all:simple:recovery"
+  ]
+
+  init -> valid_simple
+
+  valid_simple -> tx_simple_update [ layer = "all:simple:recovery" ]
+  tx_simple_update -> valid_simple [ layer = "all:simple:recovery" ]
+
+  valid_simple -> tx_theft_A0 [color=red, layer = "all:simple:recovery" ]
+  tx_theft_A0 -> revoked [color=red, layer = "all:simple:recovery" ]
+
+  valid_simple -> tx_theft_A1 [color=red, layer = "all:simple:recovery" ]
+  tx_theft_A1 -> valid_simple [label="(temporarily succeeds)    ", fontcolor=red, color=red, layer = "all:simple:recovery" ]
+
+  valid_simple -> tx_revocation  [color=orange, layer = "all:simple:recovery" ]
+
+  tx_revocation -> revoked  [color=orange, layer = "all:simple:recovery" ]
+}
+
