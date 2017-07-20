@@ -7,15 +7,15 @@ help visualize transitions and make sure all of them are covered.
 
 ### how to read the diagrams
 
-![alt text](built-diagrams/btcr-state-diagram-key.png)
+![alt text](images/btcr-state-diagram-key.png)
 
 ### the diagrams
 
-![alt text](built-diagrams/btcr-state-diagram-simple.png)
+![alt text](images/btcr-state-diagram-simple.png)
 
-![alt text](built-diagrams/btcr-state-diagram-recovery.png)
+![alt text](images/btcr-state-diagram-recovery.png)
 
-![alt text](built-diagrams/btcr-state-diagram-all.png)
+![alt text](images/btcr-state-diagram-all.png)
 
 ### open questions
 
