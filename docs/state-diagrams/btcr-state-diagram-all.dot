@@ -1,7 +1,6 @@
-/// graphviz exploration of DID:BTCR state diagram  [fr0b 20170718 08:19 ST] 
+/// graphviz exploration of DID:BTCR state diagram  [fr0b 20170718 08:19 MST] 
 
-//  dot -Tpng btcr-state-diagram-all.dot > btcr-state-diagram-all.png && open btcr-state-diagram-all.png
-//  env PNG_VIEWER=open make -f Makefile.graphviz btcr-state-diagram-all.png
+//  env PNG_VIEWER=open make btcr-state-diagram-all.png
 
 digraph self_sovereign_btcr_state_diagram {
   pad="1,1" //i.e. margin
