@@ -8,7 +8,7 @@ digraph self_sovereign_btcr_state_diagram {
 
 #if defined(DIAGRAM_KEY) || defined(DIAGRAM_ALL)
   subgraph cluster_isographs_A {
-    label="Example Isographs \n\n (These two state diagrams are logically the same. \n One is in typical form, \n and one includes the Bitcoin transaction as an explicit node, \n which creates two edges for the state transition.  \n This is the format used in the rest of this diagram.)\n\n"
+    label="Example Isographs \n\n (The below two state diagrams are logically the same. \n One is in typical form, \n and one includes the Bitcoin transaction as an explicit node, \n which creates two edges for the state transition.  \n This is the format used in the rest of these diagrams.)\n\n"
 
     tx_X [label="node: tx_X", shape=box]
 
