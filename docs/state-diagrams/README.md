@@ -7,14 +7,18 @@ help visualize transitions and make sure all of them are covered.
 
 ### how to read the diagrams
 
+[Key:](images/btcr-state-diagram-key.png)
 ![alt text](images/btcr-state-diagram-key.png)
 
 ### the diagrams
 
+[Simple:](images/btcr-state-diagram-simple.png)
 ![alt text](images/btcr-state-diagram-simple.png)
 
+[Recovery:](images/btcr-state-diagram-recovery.png)
 ![alt text](images/btcr-state-diagram-recovery.png)
 
+[All:](images/btcr-state-diagram-all.png)
 ![alt text](images/btcr-state-diagram-all.png)
 
 ### open questions
