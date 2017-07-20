@@ -1,34 +1,69 @@
-// [rgrant 20170718 08:19 MST] graphviz exploration of DID:BTCR state diagram / simple and with recovery
+/// graphviz exploration of DID:BTCR state diagram  [fr0b 20170718 08:19 ST] 
 
-// dot -Tpng btcr-state-diagram-all.dot > btcr-state-diagram-all.png && open btcr-state-diagram-all.png
+//  dot -Tpng btcr-state-diagram-all.dot > btcr-state-diagram-all.png && open btcr-state-diagram-all.png
+//  env PNG_VIEWER=open make -f Makefile.graphviz btcr-state-diagram-all.png
 
 digraph self_sovereign_btcr_state_diagram {
   pad="1,1" //i.e. margin
 
+#if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL) || defined(DIAGRAM_SIMPLE)
+  //ranks...
+  node [style=invisible]
+  rank_1->2->3->4->5->6->7->8 [arrowhead=none, style=invisible]
+  node [style=""]
+  {rank=same 8 version}
+#endif
+
+#if defined(DIAGRAM_KEY) || defined(DIAGRAM_ALL)
+  subgraph cluster_isographs_A {
+    label="Example Isographs \n\n (These two state diagrams are logically the same. \n One is in typical form, \n and one includes the Bitcoin transaction as an explicit node, \n which creates two edges for the state transition.  \n This is the format used in the rest of this diagram.)\n\n"
+
+    tx_X [label="node: tx_X", shape=box]
+
+    state_A_ -> state_A_ [label="edge: tx_X"]
+    state_A -> tx_X:sw [
+      label="double edges: tx_X", 
+      arrowhead=odot, 
+      arrowtail=crow, 
+      dir=both
+    ]
+    tx_X:se -> state_A
+  }
+
+  subgraph cluster_state_shapes {
+    label="Key for Shapes"
+
+    transaction [
+      label="TX: transaction \n (An edge between states.)"
+      shape=box
+    ]
+    ending   [shape=doubleoctagon]
+    deciding [shape=Mdiamond]
+    resting  [shape=doublecircle]
+    starting [shape=circle]
+  }
+#endif
+
+#if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL) || defined(DIAGRAM_SIMPLE)
   init [
     label = "DID init \n (also using revocation proof)"
     shape = circle
     label = "state: init."
     layer = "all:simple:recovery"
+    color=green
   ]
 
-  //subgraph cluster_usable {
-    //label="Usable DID States"
+  valid_simple [
+    label = "state: valid Simple DID"
+    shape=doublecircle
+    layer = "all:simple:recovery"
+  ]
 
-    valid_simple [
-      label = "state: valid Simple DID"
-      shape=doublecircle
-      color=green
-      layer = "all:simple:recovery"
-    ]
-
-    valid_with_recovery_proof [
-      label = "state: valid DID, \n (with recovery proof in tx~1)"
-      shape=doublecircle
-      color=green
-      layer = "all:recovery"
-    ]
-  //}
+  valid_with_recovery_proof [
+    label = "state: valid DID, \n (with recovery proof in prior TX)"
+    shape=doublecircle
+    layer = "all:recovery"
+  ]
 
   settling [
     xxlabel = "DDO control proof update, with default 24 hour settlement"
@@ -50,7 +85,7 @@ digraph self_sovereign_btcr_state_diagram {
 
   revoked [
     shape = doubleoctagon
-    color=red
+    color=orange
     label = "state: revoked!"
     layer = "all:simple:recovery"
   ]
@@ -112,36 +147,135 @@ digraph self_sovereign_btcr_state_diagram {
     layer = "all:recovery"
   ]
 
-  init -> valid_simple
+  init -> valid_simple [layer = "all:simple:recovery"]
+  init -> valid_with_recovery_proof [
+    layer = "all:recovery", 
+    weight=0
+  ]
 
-  valid_with_recovery_proof -> tx_update_with_recovery_proof [ layer = "all:simple:recovery" ]
-  tx_update_with_recovery_proof -> settling [ layer = "all:simple:recovery" ]
+  valid_with_recovery_proof -> tx_update_with_recovery_proof [
+    layer = "all:simple:recovery", 
+    arrowhead=odot, 
+    arrowtail=crow,     
+    dir=both
+  ]
+  tx_update_with_recovery_proof -> settling [layer = "all:simple:recovery"]
 
-  settling -> valid_with_recovery_proof [label="timeout", layer = "all:simple:recovery" ]
-  settling -> tx_revocation [ layer = "all:simple:recovery" ]
+  settling -> valid_with_recovery_proof [
+    label="timeout", 
+    layer = "all:simple:recovery"
+  ]
+  settling -> tx_revocation [
+    label="explicit revocation", 
+    color=orange, 
+    fontcolor=orange, 
+    layer = "all:simple:recovery",      
+    arrowhead=odot, 
+    arrowtail=crow, 
+    dir=both
+  ]
 
-  valid_simple -> tx_simple_update [ layer = "all:simple:recovery" ]
-  tx_simple_update -> valid_simple [ layer = "all:simple:recovery" ]
+  valid_simple -> tx_simple_update [
+    layer = "all:simple:recovery", 
+    arrowhead=odot,                
+    arrowtail=crow, 
+    dir=both
+  ]
+  tx_simple_update -> valid_simple [layer = "all:simple:recovery"]
 
-  valid_simple -> tx_theft_A0 [color=red, layer = "all:simple:recovery" ]
-  tx_theft_A0 -> revoked [color=red, layer = "all:simple:recovery" ]
+  valid_simple -> tx_theft_A0 [
+    color=red, 
+    layer = "all:simple:recovery", 
+    arrowhead=odot, 
+    arrowtail=crow, 
+    dir=both
+  ]
+  tx_theft_A0 -> revoked [
+    color=red, 
+    layer = "all:simple:recovery"
+  ]
 
-  valid_with_recovery_proof -> tx_theft_B0 [color=red, layer = "all:simple:recovery" ]
-  tx_theft_B0 -> frozen [color=red, layer = "all:simple:recovery" ]
+  valid_with_recovery_proof -> tx_theft_B0 [
+    color=red, 
+    layer = "all:simple:recovery", 
+    arrowhead=odot, 
+    arrowtail=crow, 
+    dir=both 
+  ]
+  tx_theft_B0 -> frozen [
+    color=red, 
+    layer = "all:simple:recovery"
+  ]
 
-  valid_simple -> tx_theft_A1 [color=red, layer = "all:simple:recovery" ]
-  tx_theft_A1 -> valid_simple [label="(temporarily succeeds)    ", fontcolor=red, color=red, layer = "all:simple:recovery" ]
+  valid_simple -> tx_theft_A1 [
+    label="(temporarily succeeds \n until revoked \n using old revocation) ",  
+    color=red, 
+    layer = "all:simple:recovery", 
+    arrowhead=odot, 
+    arrowtail=crow, 
+    dir=both
+  ]
+  tx_theft_A1 -> valid_simple [
+    fontcolor=red, 
+    color=red, 
+    layer = "all:simple:recovery"
+  ]
 
-  valid_with_recovery_proof -> tx_theft_B1 [color=red, layer = "all:recovery" ]
-  tx_theft_B1 -> settling [layer = "all:recovery" ]
+  valid_with_recovery_proof -> tx_theft_B1 [
+    color=red, 
+    layer = "all:recovery", 
+    arrowhead=odot, 
+    arrowtail=crow, 
+    dir=both
+  ]
+  tx_theft_B1 -> settling [
+    layer = "all:recovery", 
+    color=red
+  ]
 
-  frozen -> tx_recovery [ layer = "all:simple:recovery" ]
-  tx_recovery -> valid_with_recovery_proof  [fontcolor=darkgreen, layer = "all:simple:recovery" ]
-  frozen -> revoked   [label="timeout", color=red, fontcolor=red, layer = "all:simple:recovery" ]
+  frozen -> tx_recovery [
+    layer = "all:simple:recovery",
+    arrowhead=odot, 
+    arrowtail=crow, 
+    dir=both
+  ]
+  tx_recovery -> valid_with_recovery_proof [
+    fontcolor=darkgreen, 
+    layer = "all:simple:recovery"
+  ]
+  frozen -> revoked [
+    label="timeout", 
+    color=orange, 
+    fontcolor=orange,   
+    layer = "all:simple:recovery"
+  ]
 
-  valid_with_recovery_proof -> tx_revocation  [color=orange, layer = "all:simple:recovery" ]
-  valid_simple -> tx_revocation  [color=orange, layer = "all:simple:recovery" ]
+  valid_with_recovery_proof -> tx_revocation [
+    color=orange, 
+    layer = "all:simple:recovery", 
+    arrowhead=odot, 
+    arrowtail=crow, 
+    dir=both
+  ]
+  valid_simple -> tx_revocation [
+    color=orange, 
+    layer = "all:simple:recovery", 
+    arrowhead=odot, 
+    arrowtail=crow, 
+    dir=both
+  ]
 
-  tx_revocation -> revoked  [color=orange, layer = "all:simple:recovery" ]
+  tx_revocation -> revoked [
+    color=orange, 
+    layer = "all:simple:recovery"
+  ]
+#endif
+
+#if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL) || defined(DIAGRAM_SIMPLE)
+  version [
+    shape=none, 
+    label=BUILD_STRING
+  ]
+#endif
+
 }
-
