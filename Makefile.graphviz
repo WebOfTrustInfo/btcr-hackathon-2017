@@ -20,7 +20,7 @@ BUILD_DATE := $(shell date "+%Y%m%d")
 BUILD_GITDESC := $(shell git describe --dirty --always --long --tags)
 
 # graphviz fails cpp-style string concatenation, so do it here.
-BUILD_STRING = "\"built $(BUILD_DATE) from repo $(BUILD_GITDESC)\""
+BUILD_STRING = "\"built $(BUILD_DATE) from commit $(BUILD_GITDESC)\""
 
 CPPFLAGS += -DBUILD_STRING=$(BUILD_STRING) -D$(DIAGRAM_SELECTOR)
 
