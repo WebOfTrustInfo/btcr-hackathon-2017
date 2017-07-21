@@ -7,19 +7,19 @@ help visualize transitions and make sure all of them are covered.
 
 ### how to read the diagrams
 
-[Key:](images/btcr-state-diagram-key.png)
-![alt text](images/btcr-state-diagram-key.png)
+[Key:](images/btcr-state-diagram-key.svg)
+![alt text](images/btcr-state-diagram-key.svg)
 
 ### the diagrams
 
-[Simple:](images/btcr-state-diagram-simple.png)
-![alt text](images/btcr-state-diagram-simple.png)
+[Simple:](images/btcr-state-diagram-simple.svg)
+![alt text](images/btcr-state-diagram-simple.svg)
 
-[Recovery:](images/btcr-state-diagram-recovery.png)
-![alt text](images/btcr-state-diagram-recovery.png)
+[Recovery:](images/btcr-state-diagram-recovery.svg)
+![alt text](images/btcr-state-diagram-recovery.svg)
 
-[All:](images/btcr-state-diagram-all.png)
-![alt text](images/btcr-state-diagram-all.png)
+[All:](images/btcr-state-diagram-all.svg)
+![alt text](images/btcr-state-diagram-all.svg)
 
 ### open questions
 
