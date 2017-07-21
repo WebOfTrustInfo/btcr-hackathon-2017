@@ -20,7 +20,7 @@ Simple [(or as SVG)](images/btcr-state-diagram-simple.svg):
 Recovery [(or as SVG)](images/btcr-state-diagram-recovery.svg):
 ![alt text](images/btcr-state-diagram-recovery.png)
 
-All (or as SVG)](images/btcr-state-diagram-all.svg):
+All [(or as SVG)](images/btcr-state-diagram-all.svg):
 ![alt text](images/btcr-state-diagram-all.png)
 
 ### open questions
