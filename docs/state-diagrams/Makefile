@@ -8,8 +8,8 @@
 
 ### Example usage:
 ##    make all
-##    env PNG_VIEWER=open make built-diagrams/btcr-state-diagram-simple.png
-##    env CPPFLAGS="-DWITH_ATTACKS" make
+##    make built-diagrams/btcr-state-diagram-all.png && open built-diagrams/btcr-state-diagram-all.png
+##    env CPPFLAGS="-DWITH_ATTACKS -DNIGHT_MODE" make
 
 BUILD_DIR = built-diagrams
 
@@ -38,37 +38,24 @@ BUILD_STRING = "\"built $(BUILD_DATE) from commit $(BUILD_GITDESC)\""
 CPPFLAGS += \
   -DBUILD_STRING=$(BUILD_STRING) \
   -D$(DIAGRAM_SELECTOR) \
-  -Wno-extra-tokens \
-  -DCROSS_TYPES
-
-ifndef PNG_VIEWER
-PNG_VIEWER = echo "png non-viewer is echo:"
-endif
+  -Wno-extra-tokens
 
 $(BUILD_DIR)/btcr-state-diagram-all.png: DIAGRAM_SELECTOR = DIAGRAM_ALL
-$(BUILD_DIR)/btcr-state-diagram-all.png: btcr-state-diagram-all.dot
-	cpp $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
+$(BUILD_DIR)/btcr-state-diagram-all.png: btcr-state-diagram-all.dot Makefile
+	cpp $(CPPFLAGS) -DCROSS_TYPES btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
 	dot -Tpng $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-all.png
-	$(PNG_VIEWER) $(BUILD_DIR)/btcr-state-diagram-all.png
-	echo -n
 
 $(BUILD_DIR)/btcr-state-diagram-simple.png: DIAGRAM_SELECTOR = DIAGRAM_SIMPLE
-$(BUILD_DIR)/btcr-state-diagram-simple.png: btcr-state-diagram-all.dot
+$(BUILD_DIR)/btcr-state-diagram-simple.png: btcr-state-diagram-all.dot Makefile
 	cpp $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
 	dot -Tpng $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-simple.png
-	$(PNG_VIEWER) $(BUILD_DIR)/btcr-state-diagram-simple.png
-	echo -n
 
 $(BUILD_DIR)/btcr-state-diagram-recovery.png: DIAGRAM_SELECTOR = DIAGRAM_RECOVERY
-$(BUILD_DIR)/btcr-state-diagram-recovery.png: btcr-state-diagram-all.dot
+$(BUILD_DIR)/btcr-state-diagram-recovery.png: btcr-state-diagram-all.dot Makefile
 	cpp $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
 	dot -Tpng $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-recovery.png
-	$(PNG_VIEWER) $(BUILD_DIR)/btcr-state-diagram-recovery.png
-	echo -n
 
 $(BUILD_DIR)/btcr-state-diagram-key.png: DIAGRAM_SELECTOR = DIAGRAM_KEY
-$(BUILD_DIR)/btcr-state-diagram-key.png: btcr-state-diagram-all.dot
+$(BUILD_DIR)/btcr-state-diagram-key.png: btcr-state-diagram-all.dot Makefile
 	cpp $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
 	dot -Tpng $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-key.png
-	$(PNG_VIEWER) $(BUILD_DIR)/btcr-state-diagram-key.png
-	echo -n
