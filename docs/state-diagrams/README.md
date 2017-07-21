@@ -7,19 +7,21 @@ help visualize transitions and make sure all of them are covered.
 
 ### how to read the diagrams
 
-[Key:](images/btcr-state-diagram-key.svg)
-![alt text](images/btcr-state-diagram-key.svg)
+[Key (as svg):](images/btcr-state-diagram-key.svg)
+![alt text](images/btcr-state-diagram-key.png)
 
 ### the diagrams
 
-[Simple:](images/btcr-state-diagram-simple.svg)
-![alt text](images/btcr-state-diagram-simple.svg)
+The inline images are grungy PNGs, because github [won't present SVG images inline](https://github.com/github/markup/issues/556).  It's possible to [link them from an external site](https://rawgit.com/WebOfTrustInfo/btcr-hackathon/master/docs/state-diagrams/images/btcr-state-diagram-simple.svg), however that introduces another dependency for uptime and privacy.  It's also possible to install the SVGs on WebOfTrustInfo [gh-pages](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/#enabling-github-pages-to-publish-your-site-from-master-or-gh-pages), but that requires asking someone to push a button.
 
-[Recovery:](images/btcr-state-diagram-recovery.svg)
-![alt text](images/btcr-state-diagram-recovery.svg)
+[Simple (as SVG):](images/btcr-state-diagram-simple.svg)
+![alt text](images/btcr-state-diagram-simple.png)
 
-[All:](images/btcr-state-diagram-all.svg)
-![alt text](images/btcr-state-diagram-all.svg)
+[Recovery (as SVG):](images/btcr-state-diagram-recovery.svg)
+![alt text](images/btcr-state-diagram-recovery.png)
+
+[All (as SVG):](images/btcr-state-diagram-all.svg)
+![alt text](images/btcr-state-diagram-all.png)
 
 ### open questions
 
@@ -59,16 +61,16 @@ help visualize transitions and make sure all of them are covered.
 
 ### advantages of using graphviz with this CPP mechanism
 
-* graphviz lays this out automatically
+* Graphviz lays this out automatically.
 
-* it avoids a source of errors in copying node information between
-  files, at the cost of maintaining CPP ifdefs
+* It avoids a source of errors in copying node information between
+  files, at the cost of maintaining CPP ifdefs.
 
-* the clusters and nodes offer writing space, where necessary
+* The clusters and nodes offer writing space, where necessary.
 
-* for slideshow effects, the CPP mechanism offers control over turning
+* For slideshow effects, the CPP mechanism offers control over turning
   off any of the layers separately, while leaving nodes in their same
-  position in the image.  this requires setting existing nodes to
+  position in the image.  This requires setting existing nodes to
   invisible, using a CPP variable that is not yet implemented.
 
 ### dependencies
