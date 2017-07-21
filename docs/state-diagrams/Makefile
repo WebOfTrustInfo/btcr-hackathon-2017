@@ -7,16 +7,22 @@
 
 BUILD_DIR = built-diagrams
 
-all: \
-  $(BUILD_DIR)/btcr-state-diagram-all.png \
-  $(BUILD_DIR)/btcr-state-diagram-all.svg \
-  $(BUILD_DIR)/btcr-state-diagram-simple.png \
-  $(BUILD_DIR)/btcr-state-diagram-simple.svg \
-  $(BUILD_DIR)/btcr-state-diagram-recovery.png \
-  $(BUILD_DIR)/btcr-state-diagram-recovery.svg \
-  $(BUILD_DIR)/btcr-state-diagram-key.png \
-  $(BUILD_DIR)/btcr-state-diagram-key.svg
+all: pngs svgs
 .PHONY : all
+
+pngs: \
+  $(BUILD_DIR)/btcr-state-diagram-all.png \
+  $(BUILD_DIR)/btcr-state-diagram-simple.png \
+  $(BUILD_DIR)/btcr-state-diagram-recovery.png \
+  $(BUILD_DIR)/btcr-state-diagram-key.png
+.PHONY : pngs
+
+svgs: \
+  $(BUILD_DIR)/btcr-state-diagram-all.svg \
+  $(BUILD_DIR)/btcr-state-diagram-simple.svg \
+  $(BUILD_DIR)/btcr-state-diagram-recovery.svg \
+  $(BUILD_DIR)/btcr-state-diagram-key.svg
+.PHONY : svgs
 
 clean:
 	rm -f \
@@ -35,7 +41,7 @@ BUILD_DATE := $(shell date "+%Y%m%d")
 BUILD_GITDESC := $(shell git describe --dirty --always --long --tags)
 
 # graphviz fails cpp-style string concatenation, so do it here.
-BUILD_STRING = "\"rendered $(BUILD_DATE) from commit $(BUILD_GITDESC)\""
+BUILD_STRING = "\"\n\n rendered $(BUILD_DATE) from commit $(BUILD_GITDESC) \n https://github.com/WebOfTrustInfo/btcr-hackathon \n http://www.weboftrust.info/ \""
 
 CPPFLAGS += \
   -DBUILD_STRING=$(BUILD_STRING) \

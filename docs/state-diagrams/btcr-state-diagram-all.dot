@@ -1,4 +1,4 @@
-/// graphviz exploration of DID:BTCR state diagram  [fr0b 20170718 08:19 MST]
+/* graphviz exploration of DID:BTCR state diagram  [fr0b 20170718 08:19 MST] */
 
 #if !defined(NIGHT_MODE)
 
@@ -16,7 +16,7 @@
 #define SETTLING_CROSS_STATE_COLOR   "#40A0FF"
 #define REVOKE_STATE_COLOR           "#FF50B0"
 
-#else //NIGHT_MODE
+#else /* NIGHT_MODE */
 
 #define GRAPH_BGCOLOR                black
 #define GRAPH_FGCOLOR                white
@@ -30,12 +30,12 @@
 #define FROZEN_STATE_COLOR           "#8040B0"
 #define SETTLING_LOCAL_STATE_COLOR   "#4060D0"
 #define SETTLING_CROSS_STATE_COLOR   "#4080B0"
-#define REVOKE_STATE_COLOR           "#B04080"
+#define REVOKE_STATE_COLOR           "#FF50B0"
 
-#endif //NIGHT_MODE
+#endif /* NIGHT_MODE */
 
 #define BEGIN_EDGE_COLOR             "#00B000"
-#define REVOKE_FINAL_COLOR           magenta
+#define REVOKE_FINAL_COLOR           "#FF50B0"
 #define VERSION_STRING_COLOR         "#888888"
 
 #define NONCOMPLIANT_TX_COLOR        purple
@@ -50,18 +50,41 @@
 #define UPDATE_CROSS_EDGE_COLOR      "#4090FF"
 
 #define STATE_FONTSIZE 20
+#define UPDATE_PENWIDTH 5
 
 #if !defined(NO_HAND_POSITIONING)
 #define PORT_TIMEOUT w
 #define PORT_ACTION  e
 #else
+/* this will emit harmless warnings */
 #define PORT_TIMEOUT any
 #define PORT_ACTION  any
 #endif
 
-digraph self_sovereign_btcr_state_diagram {
-  pad = "1,1" //i.e. margin
+digraph self_sovereign_identity_did_btcr_state_diagram {
+  pad = "1,1" /* i.e. margin */
   bgcolor = GRAPH_BGCOLOR
+  /* newrank = true */
+
+  label = BUILD_STRING
+  fontcolor = VERSION_STRING_COLOR
+  fontsize = 12
+  labelpos = b
+
+#if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
+  subgraph cluster_title_floating {
+    label = "Self Sovereign Identity \n State Diagram for DID:BTCR Method"
+    fontcolor = GRAPH_FGCOLOR
+    labelloc = t
+    fontsize = 24
+    pencolor = transparent
+
+    foo [
+      /* without this, the cluster won't render */
+      style = invis
+    ]
+  }
+#endif
 
 #if defined(DIAGRAM_KEY)
   subgraph cluster_isographs_A {
@@ -105,6 +128,7 @@ digraph self_sovereign_btcr_state_diagram {
 #define TXX_PORT_IN  sw
 #define TXX_PORT_OUT se
 #else
+/* this will emit harmless warnings */
 #define TXX_PORT_IN  any
 #define TXX_PORT_OUT any
 #endif
@@ -162,7 +186,7 @@ digraph self_sovereign_btcr_state_diagram {
       style = filled
     ]
   }
-#endif //DIAGRAM_KEY
+#endif /* DIAGRAM_KEY */
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   begin [
@@ -267,7 +291,7 @@ digraph self_sovereign_btcr_state_diagram {
     fillcolor = TX_FILLCOLOR
     style = filled
     color = BEGIN_EDGE_COLOR
-    //HEY make tx color
+    /* HEY make tx color */
   ]
 #endif
 
@@ -279,7 +303,7 @@ digraph self_sovereign_btcr_state_diagram {
     fillcolor = TX_FILLCOLOR
     style = filled
     color = BEGIN_EDGE_COLOR
-    //HEY make tx color
+    /* HEY make tx color */
   ]
 #endif
 
@@ -354,9 +378,9 @@ digraph self_sovereign_btcr_state_diagram {
 #endif
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
-  }
+  } /* cluster_theft */
 #endif
-#endif //WITH_ATTACKS
+#endif /* WITH_ATTACKS */
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   tx_revocation [
@@ -386,6 +410,7 @@ digraph self_sovereign_btcr_state_diagram {
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   tx_update_simple [
     label = "tx: Simple Compliant Update"
+    penwidth = UPDATE_PENWIDTH
     shape = box
     fontcolor = TX_FONTCOLOR
     fillcolor = TX_FILLCOLOR
@@ -397,6 +422,7 @@ digraph self_sovereign_btcr_state_diagram {
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
   tx_update_with_recovery_proof [
     label = "tx: Compliant Update \n (including recovery proof)"
+    penwidth = UPDATE_PENWIDTH
     shape = box
     fontcolor = TX_FONTCOLOR
     fillcolor = TX_FILLCOLOR
@@ -423,7 +449,7 @@ digraph self_sovereign_btcr_state_diagram {
     style = filled
     color = UPDATE_CROSS_TX_COLOR
   ]
-#endif //DIAGRAM_ALL && CROSS_TYPES
+#endif /* DIAGRAM_ALL && CROSS_TYPES */
 
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   begin -> tx_init_simple [
@@ -457,16 +483,19 @@ digraph self_sovereign_btcr_state_diagram {
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
   valid_with_recovery_proof -> tx_update_with_recovery_proof [
+    penwidth = UPDATE_PENWIDTH,
     arrowhead = odot,
     arrowtail = crow,
     dir = both,
     color = UPDATE_TX_COLOR
   ]
   tx_update_with_recovery_proof -> settling_to_with_recovery [
+    penwidth = UPDATE_PENWIDTH,
     color = UPDATE_TX_COLOR
   ]
 
   settling_to_with_recovery:PORT_TIMEOUT -> valid_with_recovery_proof [
+    penwidth = UPDATE_PENWIDTH,
     label = "timeout",
     decorate = true,
     fontcolor = UPDATE_TX_COLOR,
@@ -490,18 +519,20 @@ digraph self_sovereign_btcr_state_diagram {
   tx_update_cross_to_simple_from_with_recovery -> settling_to_simple [
     color = UPDATE_CROSS_EDGE_COLOR
   ]
-#endif //DIAGRAM_ALL && CROSS_TYPES
+#endif /* DIAGRAM_ALL && CROSS_TYPES */
 
-#endif
+#endif /* DIAGRAM_RECOVERY || DIAGRAM_ALL */
 
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   valid_simple -> tx_update_simple [
+    penwidth = UPDATE_PENWIDTH,
     arrowhead = odot,
     arrowtail = crow,
     dir = both,
     color = UPDATE_EDGE_COLOR
   ]
   tx_update_simple -> valid_simple [
+    penwidth = UPDATE_PENWIDTH,
     color = UPDATE_EDGE_COLOR
   ]
 #if defined(DIAGRAM_ALL) && defined(CROSS_TYPES)
@@ -530,8 +561,8 @@ digraph self_sovereign_btcr_state_diagram {
     arrowtail = crow,
     dir = both,
   ]
-#endif //DIAGRAM_ALL && CROSS_TYPES
-#endif //DIAGRAM_SIMPLE || DIAGRAM_ALL
+#endif /* DIAGRAM_ALL && CROSS_TYPES */
+#endif /* DIAGRAM_SIMPLE || DIAGRAM_ALL */
 
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   valid_simple -> tx_spend_for_simple [
@@ -557,7 +588,6 @@ digraph self_sovereign_btcr_state_diagram {
   ]
 #endif
 
-
 #if defined(WITH_ATTACKS)
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   valid_simple -> tx_theft_A0 [
@@ -570,7 +600,7 @@ digraph self_sovereign_btcr_state_diagram {
     color = THEFT_EDGE_COLOR,
   ]
 #endif
-#endif //WITH_ATTACKS
+#endif /* WITH_ATTACKS */
 
 #if defined(WITH_ATTACKS)
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
@@ -585,7 +615,7 @@ digraph self_sovereign_btcr_state_diagram {
     color = THEFT_EDGE_COLOR,
   ]
 #endif
-#endif //WITH_ATTACKS
+#endif /* WITH_ATTACKS */
 
 #if defined(WITH_ATTACKS)
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
@@ -601,7 +631,7 @@ digraph self_sovereign_btcr_state_diagram {
     color = THEFT_EDGE_COLOR,
   ]
 #endif
-#endif //WITH_ATTACKS
+#endif /* WITH_ATTACKS */
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
 #if defined(WITH_ATTACKS)
@@ -614,7 +644,7 @@ digraph self_sovereign_btcr_state_diagram {
   tx_theft_B1 -> settling_to_with_recovery [
     color = THEFT_EDGE_COLOR
   ]
-#endif //WITH_ATTACKS
+#endif /* WITH_ATTACKS */
 
   frozen:PORT_ACTION -> tx_recovery [
     arrowhead = odot,
@@ -651,19 +681,8 @@ digraph self_sovereign_btcr_state_diagram {
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   tx_revocation -> revoked [
-    color = REVOKE_FINAL_COLOR,
+    color = REVOKE_FINAL_COLOR
   ]
 #endif
 
-#if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
-  version [
-    shape = none
-    label = BUILD_STRING
-    fontcolor = VERSION_STRING_COLOR
-  ]
-#if !defined(NO_HAND_POSITIONING) || defined(SOME_RANK_POSITIONING_ANYWAY)
-  {rank = max version}
-#endif
-#endif
-
-}
+} /* end digraph */
