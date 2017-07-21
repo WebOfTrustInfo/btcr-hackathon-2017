@@ -250,8 +250,15 @@ digraph self_sovereign_btcr_state_diagram {
     color = UPDATE_TX_COLOR
   ]
 
-  settling_to_with_recovery:w -> valid_with_recovery_proof [
-    label = "timeout \n\n\n\n\n\n\n\n\n", //BUG hand-positioned crap, sorry.
+#if defined(DIAGRAM_ALL)
+//BUG hand-positioned crap, sorry.
+#define RECOVERY_PORT valid_with_recovery_proof:s
+#else
+#define RECOVERY_PORT valid_with_recovery_proof
+#endif
+
+  settling_to_with_recovery:w -> RECOVERY_PORT [
+    label = "\n\n\n\n\n\n timeout", //BUG hand-positioned crap, sorry.
     fontcolor = UPDATE_TX_COLOR,
     color = UPDATE_TX_COLOR
   ]
@@ -298,9 +305,10 @@ digraph self_sovereign_btcr_state_diagram {
     color = UPDATE_CROSS_EDGE_COLOR
   ]
   settling_to_simple:w -> valid_simple [
-    xlabel = "timeout \n",
+    xlabel = "timeout \n\n",
     fontcolor = UPDATE_CROSS_EDGE_COLOR,
-    color = UPDATE_CROSS_EDGE_COLOR
+    color = UPDATE_CROSS_EDGE_COLOR,
+    weight = 0  //BUG hand-positioned crap, sorry.
   ]
   settling_to_simple:e -> tx_revocation [
     color = REVOKE_FINAL_COLOR,
