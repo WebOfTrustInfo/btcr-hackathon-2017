@@ -23,15 +23,8 @@ help visualize transitions and make sure all of them are covered.
 
 ### open questions
 
-* There's a valid user revocation possible by spending the BTC on the
-  current tip.  This style of revocation does not have its own edges,
-  yet.  The closest things are the "BTC theft" edges.
-
 * Is the user's "explicit immediate revocation" a static transaction
   that can be outsourced to an external monitor?
-
-* Is it actually helpful to show the red key compromises separately
-  from the similar blue updates?
 
 ### differences from UML protocol state machines
 
@@ -53,7 +46,8 @@ help visualize transitions and make sure all of them are covered.
 * Some transition edges are provoked by a timeout, and these do not
   require extra pieces to draw.
 
-* Color is used to separate various concerns.
+* Color is used to separate various concerns.  Better colors would be
+  nice.
 
 * This diagram focuses on threats to users of the protocol, giving
   attack scenarios their own transition edges (always colored red),
@@ -96,5 +90,3 @@ http://www.graphviz.org/Download.php
 ### building the diagram images
 
 `make all`
-
-
