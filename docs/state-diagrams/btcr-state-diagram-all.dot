@@ -1,74 +1,117 @@
-/// graphviz exploration of DID:BTCR state diagram  [fr0b 20170718 08:19 MST] 
+/// graphviz exploration of DID:BTCR state diagram  [fr0b 20170718 08:19 MST]
 
-//  env PNG_VIEWER=open make btcr-state-diagram-all.png
+#define INIT_NODE_COLOR             "#A0FFA0"
+#define VALID_NODE_COLOR            "#80A0FF"
+#define FROZEN_NODE_COLOR           "#D060A0"
+#define SETTLING_LOCAL_NODE_COLOR   "#5070FF"
+#define SETTLING_CROSS_NODE_COLOR   "#40A0FF"
+#define REVOKE_NODE_COLOR           "#FF50B0"
+
+#define INIT_EDGE_COLOR             "#00B000"
+#define REVOKE_FINAL_COLOR          magenta
+
+#define NONCOMPLIANT_TX_COLOR       purple
+#define NONCOMPLIANT_EDGE_COLOR     purple
+#define THEFT_TX_COLOR              red
+#define THEFT_EDGE_COLOR            red
+#define RECOVERY_TX_COLOR           "#666666"
+#define RECOVERY_EDGE_COLOR         "#666666"
+#define UPDATE_TX_COLOR             blue
+#define UPDATE_EDGE_COLOR           blue
+#define UPDATE_CROSS_TX_COLOR       "#0090FF"
+#define UPDATE_CROSS_EDGE_COLOR     "#0090FF"
 
 digraph self_sovereign_btcr_state_diagram {
-  pad="1,1" //i.e. margin
+  pad = "1,1" //i.e. margin
 
-#if defined(DIAGRAM_KEY) || defined(DIAGRAM_ALL)
+#if defined(DIAGRAM_KEY)
   subgraph cluster_isographs_A {
-    label="Example Isographs \n\n (The below two state diagrams are logically the same. \n One is in typical form, \n and one includes the Bitcoin transaction as an explicit node, \n which creates two edges for the state transition.  \n This is the format used in the rest of these diagrams.)\n\n"
+    label = "Example Isographs \n\n (The below two state diagrams are logically the same. \n One is in typical form, \n and one includes the Bitcoin transaction as an explicit node, \n which creates two edges for the state transition.  \n This is the format used in the rest of these diagrams.)\n\n"
 
-    tx_X [label="node: tx_X", shape=box]
+    tx_X [label = "node: tx_X", shape = box]
 
-    state_A_ -> state_A_ [label="edge: tx_X"]
+    state_A_ -> state_A_ [label = "edge: tx_X"]
     state_A -> tx_X:sw [
-      label="double edges: tx_X", 
-      arrowhead=odot, 
-      arrowtail=crow, 
-      dir=both
+      label = "double edges: tx_X",
+      arrowhead = odot,
+      arrowtail = crow,
+      dir = both
     ]
     tx_X:se -> state_A
   }
 
   subgraph cluster_state_shapes {
-    label="Key for Shapes"
+    label = "Key for Shapes"
 
     transaction [
-      label="TX: transaction \n (An edge between states.)"
-      shape=box
+      label = "TX: transaction \n (An edge between states.)"
+      shape = box
     ]
-    ending   [shape=doubleoctagon]
-    deciding [shape=Mdiamond]
-    resting  [shape=doublecircle]
-    starting [shape=circle]
+    ending   [shape = doubleoctagon]
+    deciding [shape = Mdiamond]
+    resting  [shape = box, style = rounded]
+    starting [shape = circle]
   }
-#endif
+#endif //DIAGRAM_KEY
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   init [
-    label = "state: DID Init \n (with revocation proof)"
+    label = "state: DID Init \n (revocation proof required)"
     shape = circle
-    color=green
+    color = INIT_NODE_COLOR
+    style = filled
   ]
 #endif
 
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   valid_simple [
     label = "state: Valid Simple DID"
-    shape=doublecircle
+    shape = box
+    color = VALID_NODE_COLOR
+    style = "rounded,filled"
+    height = 3
+    width = 3
   ]
+  {rank = min valid_simple}
 #endif
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
   valid_with_recovery_proof [
     label = "state: Valid DID, \n (recovery proof in prior TX)"
-    shape=doublecircle
+    shape = box
+    color = VALID_NODE_COLOR
+    style = "rounded,filled"
+    height = 3
+    width = 3
+  ]
+  {rank = min valid_with_recovery_proof}
+
+  settling_to_with_recovery [
+    label = "state: Settling... \n (default 24 hours)"
+    shape = Mdiamond
+    height = 1.5
+    width = 2
+    color = SETTLING_LOCAL_NODE_COLOR
+    style = filled
   ]
 
-  settling [
+#if defined(DIAGRAM_ALL) && defined(CROSS_TYPES)
+  settling_to_simple [
     label = "state: Settling... \n (default 24 hours)"
-    shape=Mdiamond
-    height=1.5
-    width=2
-    color=blue
+    shape = Mdiamond
+    height = 1.5
+    width = 2
+    color = SETTLING_CROSS_NODE_COLOR
+    style = filled
   ]
+#endif
 
   frozen [
-    shape=Mdiamond
-    height=1.5
-    width=2
-    color=orange
+    shape = Mdiamond
+    style = filled
+    height = 1.5
+    width = 2
+    color = FROZEN_NODE_COLOR
     label = "state: Frozen... \n (default 24 hours)"
   ]
 #endif
@@ -76,11 +119,30 @@ digraph self_sovereign_btcr_state_diagram {
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   revoked [
     shape = doubleoctagon
-    color=orange
+    color = REVOKE_NODE_COLOR
+    height = 2
+    width = 2
     label = "state: Revoked!"
+    style = filled
   ]
 #endif
 
+#if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
+  tx_spend_for_simple [
+    label = "TX: noncompliant BTC spend"
+    shape = box
+    color = REVOKE_FINAL_COLOR
+  ]
+#endif
+#if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
+  tx_spend_with_recovery [
+    label = "TX: noncompliant BTC spend"
+    shape = box
+    color = NONCOMPLIANT_TX_COLOR
+  ]
+#endif
+
+#if defined(WITH_ATTACKS)
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   subgraph cluster_theft {
     label="Key Compromise / Theft \n (Compliance is with respect to the resulting transaction chain \n and whether it validates as a DID:BTCR update.)"
@@ -89,131 +151,212 @@ digraph self_sovereign_btcr_state_diagram {
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
     tx_theft_A0 [
       label = "TX: noncompliant BTC theft"
-      shape=box
-      color=red
+      shape = box
+      color = THEFT_TX_COLOR
     ]
 
     tx_theft_A1 [
       label = "TX: compliant DID theft"
-      shape=box
-      color=red
+      shape = box
+      color = THEFT_TX_COLOR
     ]
 #endif
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
     tx_theft_B0 [
       label = "TX: noncompliant BTC theft"
-      shape=box
-      color=red
+      shape = box
+      color = THEFT_TX_COLOR
     ]
 
     tx_theft_B1 [
       label = "TX: compliant DID theft"
-      shape=box
-      color=red
+      shape = box
+      color = THEFT_TX_COLOR
     ]
 #endif
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   }
 #endif
- 
+#endif //WITH_ATTACKS
+
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   tx_revocation [
     label = "TX: explicit immediate revocation"
-    shape=box
-    color=orange
+    shape = box
+    color = REVOKE_FINAL_COLOR
   ]
 #endif
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
   tx_recovery [
     label = "TX: recovery \n (DID follows this UTXO!)"
-    shape=box
+    shape = box
+    color = RECOVERY_TX_COLOR
   ]
 #endif
 
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
-  tx_simple_update [
+  tx_update_simple [
     label = "TX: simplest compliant update"
-    shape=box
-    color=blue
+    shape = box
+    color = UPDATE_TX_COLOR
   ]
 #endif
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
   tx_update_with_recovery_proof [
     label = "TX: compliant update \n (also including recovery proof)"
-    shape=box
-    color=blue
+    shape = box
+    color = UPDATE_TX_COLOR
   ]
 #endif
 
+#if defined(DIAGRAM_ALL) && defined(CROSS_TYPES)
+  tx_update_cross_to_simple_from_with_recovery [
+    label = "TX: compliant update \n (dropping recovery proof)"
+    shape = box
+    color = UPDATE_CROSS_TX_COLOR
+  ]
+
+  tx_update_cross_to_with_recovery_from_simple [
+    label = "TX: compliant update \n (adding recovery proof)"
+    shape = box
+    color = UPDATE_CROSS_TX_COLOR
+  ]
+#endif //DIAGRAM_ALL && CROSS_TYPES
+
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
-  init -> valid_simple
+  init -> valid_simple [
+    color = INIT_EDGE_COLOR
+  ]
 #endif
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
   init -> valid_with_recovery_proof [
-    weight=0
+    color = INIT_EDGE_COLOR
   ]
 #endif
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
   valid_with_recovery_proof -> tx_update_with_recovery_proof [
-    arrowhead=odot, 
-    arrowtail=crow,     
-    dir=both
-    color=blue
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both,
+    color = UPDATE_TX_COLOR
   ]
-  tx_update_with_recovery_proof -> settling [
-    color=blue
+  tx_update_with_recovery_proof -> settling_to_with_recovery [
+    color = UPDATE_TX_COLOR
   ]
 
-  settling:w -> valid_with_recovery_proof [
-    label="timeout      ", 
-    fontcolor=blue,
-    color=blue
+  settling_to_with_recovery:w -> valid_with_recovery_proof [
+    label = "timeout \n\n\n\n\n\n\n\n\n", //BUG hand-positioned crap, sorry.
+    fontcolor = UPDATE_TX_COLOR,
+    color = UPDATE_TX_COLOR
   ]
-  settling:e -> tx_revocation [
-    color=orange, 
-    fontcolor=orange, 
-    arrowhead=odot, 
-    arrowtail=crow, 
-    dir=both
+  settling_to_with_recovery:e -> tx_revocation [
+    color = REVOKE_FINAL_COLOR
+    fontcolor = REVOKE_FINAL_COLOR,
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both
   ]
+
+#if defined(DIAGRAM_ALL) && defined(CROSS_TYPES)
+  valid_with_recovery_proof -> tx_update_cross_to_simple_from_with_recovery [
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both,
+    color = UPDATE_CROSS_EDGE_COLOR
+  ]
+  tx_update_cross_to_simple_from_with_recovery -> settling_to_simple [
+    color = UPDATE_CROSS_EDGE_COLOR
+  ]
+#endif //DIAGRAM_ALL && CROSS_TYPES
+
 #endif
 
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
-  valid_simple -> tx_simple_update [
-    arrowhead=odot,                
-    arrowtail=crow, 
-    dir=both
-    color=blue
+  valid_simple -> tx_update_simple [
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both,
+    color = UPDATE_EDGE_COLOR
   ]
-  tx_simple_update -> valid_simple [
-    color=blue
+  tx_update_simple -> valid_simple [
+    color = UPDATE_EDGE_COLOR
+  ]
+#if defined(DIAGRAM_ALL) && defined(CROSS_TYPES)
+  valid_simple -> tx_update_cross_to_with_recovery_from_simple [
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both,
+    color = UPDATE_CROSS_EDGE_COLOR
+  ]
+  tx_update_cross_to_with_recovery_from_simple -> valid_with_recovery_proof [
+    color = UPDATE_CROSS_EDGE_COLOR
+  ]
+  settling_to_simple:w -> valid_simple [
+    xlabel = "timeout \n",
+    fontcolor = UPDATE_CROSS_EDGE_COLOR,
+    color = UPDATE_CROSS_EDGE_COLOR
+  ]
+  settling_to_simple:e -> tx_revocation [
+    color = REVOKE_FINAL_COLOR,
+    fontcolor = REVOKE_FINAL_COLOR,
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both,
+  ]
+#endif //DIAGRAM_ALL && CROSS_TYPES
+#endif //DIAGRAM_SIMPLE || DIAGRAM_ALL
+
+#if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
+  valid_simple -> tx_spend_for_simple [
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both,
+    color = REVOKE_FINAL_COLOR
+  ]
+  tx_spend_for_simple -> revoked [
+    color = REVOKE_FINAL_COLOR
+  ]
+#endif
+#if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
+  valid_with_recovery_proof -> tx_spend_with_recovery [
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both,
+    color = NONCOMPLIANT_EDGE_COLOR
+  ]
+  tx_spend_with_recovery -> frozen:n [
+    color = NONCOMPLIANT_EDGE_COLOR
   ]
 #endif
 
+
+#if defined(WITH_ATTACKS)
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   valid_simple -> tx_theft_A0 [
-    color=red, 
-    arrowhead=odot, 
-    arrowtail=crow, 
-    dir=both
+    color = THEFT_EDGE_COLOR,
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both,
   ]
   tx_theft_A0 -> revoked [
-    color=red, 
+    color = THEFT_EDGE_COLOR,
   ]
 #endif
+#endif //WITH_ATTACKS
 
+#if defined(WITH_ATTACKS)
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
   valid_with_recovery_proof -> tx_theft_B0 [
-    color=red, 
-    arrowhead=odot, 
-    arrowtail=crow, 
-    dir=both 
+    color = THEFT_EDGE_COLOR,
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both
   ]
 #if defined(DIAGRAM_RECOVERY)
 #define FROZEN_PORT frozen:n
@@ -221,78 +364,84 @@ digraph self_sovereign_btcr_state_diagram {
 #define FROZEN_PORT frozen:nw
 #endif
   tx_theft_B0 -> FROZEN_PORT [
-    color=red, 
+    color = THEFT_EDGE_COLOR,
   ]
 #endif
+#endif //WITH_ATTACKS
 
+#if defined(WITH_ATTACKS)
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   valid_simple -> tx_theft_A1 [
-    label="(temporarily succeeds \n until revoked \n using old revocation) ",  
-    color=red, 
-    arrowhead=odot, 
-    arrowtail=crow, 
-    dir=both
+    label = "(temporarily succeeds \n until revoked \n using old revocation) ",
+    color = THEFT_EDGE_COLOR,
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both
   ]
   tx_theft_A1 -> valid_simple [
-    fontcolor=red, 
-    color=red, 
+    fontcolor = THEFT_EDGE_COLOR,
+    color = THEFT_EDGE_COLOR,
   ]
 #endif
+#endif //WITH_ATTACKS
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_ALL)
+#if defined(WITH_ATTACKS)
   valid_with_recovery_proof -> tx_theft_B1 [
-    color=red, 
-    arrowhead=odot, 
-    arrowtail=crow, 
-    dir=both
+    color = THEFT_EDGE_COLOR,
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both
   ]
-  tx_theft_B1 -> settling [
-    color=red
+  tx_theft_B1 -> settling_to_with_recovery [
+    color = THEFT_EDGE_COLOR
   ]
+#endif //WITH_ATTACKS
 
   frozen:e -> tx_recovery [
-    arrowhead=odot, 
-    arrowtail=crow, 
-    dir=both
+    arrowhead = odot,
+    arrowtail = crow,
+    color = RECOVERY_EDGE_COLOR,
+    dir = both
   ]
   frozen:w -> revoked [
-    label="timeout", 
-    color=orange, 
-    fontcolor=orange,   
+    xlabel = "timeout \n\n",  //BUG hand-positioned crap, sorry.
+    color = REVOKE_FINAL_COLOR,
+    fontcolor = REVOKE_FINAL_COLOR,
   ]
   tx_recovery -> valid_with_recovery_proof [
-    fontcolor=darkgreen, 
+    color = RECOVERY_EDGE_COLOR,
   ]
 
   valid_with_recovery_proof -> tx_revocation [
-    color=orange, 
-    arrowhead=odot, 
-    arrowtail=crow, 
-    dir=both
+    color = REVOKE_FINAL_COLOR,
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both
   ]
 #endif
 
 #if defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   valid_simple -> tx_revocation [
-    color=orange, 
-    arrowhead=odot, 
-    arrowtail=crow, 
-    dir=both
+    color = REVOKE_FINAL_COLOR,
+    arrowhead = odot,
+    arrowtail = crow,
+    dir = both
   ]
 #endif
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   tx_revocation -> revoked [
-    color=orange, 
+    color = REVOKE_FINAL_COLOR,
   ]
 #endif
 
 #if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   version [
-    shape=none, 
-    label=BUILD_STRING
+    shape = none,
+    label = BUILD_STRING
   ]
-  {rank=max version}
+  {rank = max version}
 #endif
 
 }
