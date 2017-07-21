@@ -7,21 +7,21 @@ help visualize transitions and make sure all of them are covered.
 
 ### how to read the diagrams
 
-Key [(or as svg)](images/btcr-state-diagram-key.svg)
-![alt text](images/btcr-state-diagram-key.png):
+Key [(or as svg)](images/btcr-state-diagram-key.svg):
+![alt text](images/btcr-state-diagram-key.png)
 
 ### the diagrams
 
 The inline images are grungy PNGs, because github [won't present SVG images inline](https://github.com/github/markup/issues/556).  It's possible to [link them from an external site](https://rawgit.com/WebOfTrustInfo/btcr-hackathon/master/docs/state-diagrams/images/btcr-state-diagram-simple.svg), however that introduces another dependency for uptime and privacy.  It's also possible to install the SVGs on WebOfTrustInfo [gh-pages](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/#enabling-github-pages-to-publish-your-site-from-master-or-gh-pages), but that requires asking someone to push a button.
 
-Simple [(or as SVG)](images/btcr-state-diagram-simple.svg)
-![alt text](images/btcr-state-diagram-simple.png):
+Simple [(or as SVG)](images/btcr-state-diagram-simple.svg):
+![alt text](images/btcr-state-diagram-simple.png)
 
-Recovery [(or as SVG)](images/btcr-state-diagram-recovery.svg)
-![alt text](images/btcr-state-diagram-recovery.png):
+Recovery [(or as SVG)](images/btcr-state-diagram-recovery.svg):
+![alt text](images/btcr-state-diagram-recovery.png)
 
-All (or as SVG)](images/btcr-state-diagram-all.svg)
-![alt text](images/btcr-state-diagram-all.png):
+All (or as SVG)](images/btcr-state-diagram-all.svg):
+![alt text](images/btcr-state-diagram-all.png)
 
 ### open questions
 
