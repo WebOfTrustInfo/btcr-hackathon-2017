@@ -1,9 +1,10 @@
 ### Makefile for graphviz renderings [fr0b 20170719 17:42 CDT]
 
 ### Example usage:
-##    make all
+##    make
+##    make pngs
 ##    make built-diagrams/btcr-state-diagram-all.png && open built-diagrams/btcr-state-diagram-all.png
-##    env CPPFLAGS="-DWITH_ATTACKS -DNIGHT_MODE -DNO_HAND_POSITIONING -DSOME_RANK_POSITIONING_ANYWAY" make
+##    env CPPFLAGS="-DWITH_ATTACKS -DNIGHT_MODE -DNO_HAND_POSITIONING -DSOME_RANK_POSITIONING_ANYWAY -UCROSS_TYPES" make
 
 BUILD_DIR = built-diagrams
 
@@ -51,13 +52,13 @@ CPPFLAGS += \
 $(BUILD_DIR)/btcr-state-diagram-all.png: DIAGRAM_SELECTOR = DIAGRAM_ALL
 $(BUILD_DIR)/btcr-state-diagram-all.png: btcr-state-diagram-all.dot Makefile
 	mkdir -p $(BUILD_DIR)
-	cpp $(CPPFLAGS) -DCROSS_TYPES btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
+	cpp -DCROSS_TYPES $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
 	dot -Tpng $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-all.png
 
 $(BUILD_DIR)/btcr-state-diagram-all.svg: DIAGRAM_SELECTOR = DIAGRAM_ALL
 $(BUILD_DIR)/btcr-state-diagram-all.svg: btcr-state-diagram-all.dot Makefile
 	mkdir -p $(BUILD_DIR)
-	cpp $(CPPFLAGS) -DCROSS_TYPES btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
+	cpp -DCROSS_TYPES $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
 	dot -Tsvg $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-all.svg
 
 $(BUILD_DIR)/btcr-state-diagram-simple.png: DIAGRAM_SELECTOR = DIAGRAM_SIMPLE

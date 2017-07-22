@@ -66,12 +66,12 @@ digraph self_sovereign_identity_did_btcr_state_diagram {
   bgcolor = GRAPH_BGCOLOR
   /* newrank = true */
 
+#if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   label = BUILD_STRING
   fontcolor = VERSION_STRING_COLOR
   fontsize = 12
   labelpos = b
 
-#if defined(DIAGRAM_RECOVERY) || defined(DIAGRAM_SIMPLE) || defined(DIAGRAM_ALL)
   subgraph cluster_title_floating {
     label = "Self Sovereign Identity \n State Diagram for DID:BTCR Method"
     fontcolor = GRAPH_FGCOLOR
@@ -87,42 +87,38 @@ digraph self_sovereign_identity_did_btcr_state_diagram {
 #endif
 
 #if defined(DIAGRAM_KEY)
-  subgraph cluster_isographs_A {
+  subgraph cluster_state_shapes {
     fontcolor = GRAPH_FGCOLOR
+    fontsize = 20
     color = GRAPH_FGCOLOR
+    pencolor = transparent
+    label = "Key for Shapes"
 
-    label = "Example Isographs \n\n (The below two state diagrams are logically the same. \n One is in typical form, \n and one includes the Bitcoin transaction as an explicit node, \n which creates two drawn edges \n for the single logical state transition.  \n These diagrams use the latter format.)\n\n"
+    subgraph cluster_txs_key {
+      fontcolor = GRAPH_FGCOLOR
+      fontsize = 16
+      color = GRAPH_FGCOLOR
+      pencolor = GRAPH_FGCOLOR
 
-    tx_X [
-      label = "tx: Transaction X\'"
-      shape = box
-      fontcolor = TX_FONTCOLOR
-      fillcolor = TX_FILLCOLOR
-      style = filled
-      color = RECOVERY_TX_COLOR
-    ]
+      label = "Edges \n\n The Bitcoin transaction initiating action is rendered as an explicit node. \n It is not a state, but rather an elaborate edge label. \n This creates two drawn edges for the single logical state transition."
 
-    state_A [
-      label = "A"
-      fontsize = STATE_FONTSIZE
-      fontcolor = STATE_FONTCOLOR
-      color = VALID_STATE_COLOR
-      style = filled
-    ]
-    state_A_prime [
-      label = "A\'"
-      fontsize = STATE_FONTSIZE
-      fontcolor = STATE_FONTCOLOR
-      color = VALID_STATE_COLOR
-      shape = box
-      style = "rounded,filled"
-    ]
+      tx_X [
+        label = "tx: Updating Transaction"
+        shape = box
+        fontcolor = TX_FONTCOLOR
+        fillcolor = TX_FILLCOLOR
+        style = filled
+        color = RECOVERY_TX_COLOR
+      ]
 
-    state_A -> state_A [
-      label = "tx: Transaction X"
-      fontcolor = TX_FONTCOLOR
-      color = RECOVERY_EDGE_COLOR
-    ]
+      state_A [
+        label = "Some State"
+        fontsize = STATE_FONTSIZE
+        fontcolor = STATE_FONTCOLOR
+        color = VALID_STATE_COLOR
+        shape = box
+        style = "rounded,filled"
+      ]
 
 #if !defined(NO_HAND_POSITIONING)
 #define TXX_PORT_IN  sw
@@ -133,58 +129,52 @@ digraph self_sovereign_identity_did_btcr_state_diagram {
 #define TXX_PORT_OUT any
 #endif
 
-    state_A_prime -> tx_X:TXX_PORT_IN [
-      label = "note different arrow styles \n on a single logical edge",
-      arrowhead = odot,
-      arrowtail = crow,
-      dir = both
-      fontcolor = TX_FONTCOLOR
-      color = RECOVERY_EDGE_COLOR
-    ]
-    tx_X:TXX_PORT_OUT -> state_A_prime [
-      fontcolor = TX_FONTCOLOR
-      color = RECOVERY_EDGE_COLOR
-    ]
-  }
+      state_A -> tx_X:TXX_PORT_IN [
+        label = "note different arrow styles \n on a single logical edge",
+        arrowhead = odot,
+        arrowtail = crow,
+        dir = both
+        fontcolor = TX_FONTCOLOR
+        color = RECOVERY_EDGE_COLOR
+      ]
+      tx_X:TXX_PORT_OUT -> state_A [
+        fontcolor = TX_FONTCOLOR
+        color = RECOVERY_EDGE_COLOR
+      ]
+    }
 
-  subgraph cluster_state_shapes {
-    fontcolor = GRAPH_FGCOLOR
-    color = GRAPH_FGCOLOR
+    subgraph cluster_states_key {
+      fontcolor = GRAPH_FGCOLOR
+      fontsize = 16
+      color = GRAPH_FGCOLOR
+      pencolor = GRAPH_FGCOLOR
+      label = "States"
 
-    label = "Key for Shapes"
-
-    transaction [
-      label = "tx: Transaction X\' \n (an edge between states)"
-      shape = box
-      fontcolor = TX_FONTCOLOR
-      fillcolor = TX_FILLCOLOR
-      style = filled
-      color = RECOVERY_TX_COLOR
-    ]
-    ending   [
-      shape = doubleoctagon
-      fontcolor = STATE_FONTCOLOR
-      color = REVOKE_STATE_COLOR
-      style = filled
-    ]
-    deciding [
-      shape = Mdiamond
-      fontcolor = STATE_FONTCOLOR
-      color = SETTLING_LOCAL_STATE_COLOR
-      style = filled
-    ]
-    resting  [
-      shape = box
-      fontcolor = STATE_FONTCOLOR
-      color = VALID_STATE_COLOR
-      style = "rounded,filled"
-    ]
-    starting [
-      shape = circle
-      fontcolor = STATE_FONTCOLOR
-      color = BEGIN_STATE_COLOR
-      style = filled
-    ]
+      ending   [
+        shape = doubleoctagon
+        fontcolor = STATE_FONTCOLOR
+        color = REVOKE_STATE_COLOR
+        style = filled
+      ]
+      deciding [
+        shape = Mdiamond
+        fontcolor = STATE_FONTCOLOR
+        color = SETTLING_LOCAL_STATE_COLOR
+        style = filled
+      ]
+      resting  [
+        shape = box
+        fontcolor = STATE_FONTCOLOR
+        color = VALID_STATE_COLOR
+        style = "rounded,filled"
+      ]
+      starting [
+        shape = circle
+        fontcolor = STATE_FONTCOLOR
+        color = BEGIN_STATE_COLOR
+        style = filled
+      ]
+    } /* cluster_states_key */
   }
 #endif /* DIAGRAM_KEY */
 
