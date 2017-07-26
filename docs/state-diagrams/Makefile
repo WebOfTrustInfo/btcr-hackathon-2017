@@ -7,34 +7,24 @@
 ##    env CPPFLAGS="-DWITH_ATTACKS -DNIGHT_MODE -DNO_HAND_POSITIONING -DSOME_RANK_POSITIONING_ANYWAY -UCROSS_TYPES" make
 
 BUILD_DIR = built-diagrams
+TARGET_BRANCHES = all simple recovery key
+TARGET_PREFIX = $(BUILD_DIR)/btcr-state-diagram-
+PNG_TARGETS = $(foreach branch,$(TARGET_BRANCHES),$(TARGET_PREFIX)$(branch).png)
+SVG_TARGETS = $(foreach branch,$(TARGET_BRANCHES),$(TARGET_PREFIX)$(branch).svg)
 
 all: pngs svgs
 .PHONY : all
 
-pngs: \
-  $(BUILD_DIR)/btcr-state-diagram-all.png \
-  $(BUILD_DIR)/btcr-state-diagram-simple.png \
-  $(BUILD_DIR)/btcr-state-diagram-recovery.png \
-  $(BUILD_DIR)/btcr-state-diagram-key.png
+pngs: $(PNG_TARGETS)
 .PHONY : pngs
 
-svgs: \
-  $(BUILD_DIR)/btcr-state-diagram-all.svg \
-  $(BUILD_DIR)/btcr-state-diagram-simple.svg \
-  $(BUILD_DIR)/btcr-state-diagram-recovery.svg \
-  $(BUILD_DIR)/btcr-state-diagram-key.svg
+svgs: $(SVG_TARGETS)
 .PHONY : svgs
 
 clean:
 	rm -f \
-	  $(BUILD_DIR)/btcr-state-diagram-all.png \
-	  $(BUILD_DIR)/btcr-state-diagram-all.svg \
-	  $(BUILD_DIR)/btcr-state-diagram-simple.png \
-	  $(BUILD_DIR)/btcr-state-diagram-simple.svg \
-	  $(BUILD_DIR)/btcr-state-diagram-recovery.png \
-	  $(BUILD_DIR)/btcr-state-diagram-recovery.svg \
-	  $(BUILD_DIR)/btcr-state-diagram-key.png \
-	  $(BUILD_DIR)/btcr-state-diagram-key.svg \
+	  $(PNG_TARGETS) \
+	  $(SVG_TARGETS) \
 	  $(BUILD_DIR)/graphviz-build.dot
 .PHONY : clean
 
@@ -49,50 +39,30 @@ CPPFLAGS += \
   -D$(DIAGRAM_SELECTOR) \
   -Wno-extra-tokens
 
-$(BUILD_DIR)/btcr-state-diagram-all.png: DIAGRAM_SELECTOR = DIAGRAM_ALL
-$(BUILD_DIR)/btcr-state-diagram-all.png: btcr-state-diagram-all.dot Makefile
+# The "all" cases use an extra define, CROSS_TYPES, earning a separate rule.
+$(BUILD_DIR)/btcr-state-diagram-all.png $(BUILD_DIR)/btcr-state-diagram-all.svg: DIAGRAM_SELECTOR = DIAGRAM_ALL
+$(BUILD_DIR)/btcr-state-diagram-all.png $(BUILD_DIR)/btcr-state-diagram-all.svg: btcr-state-diagram-all.dot
 	mkdir -p $(BUILD_DIR)
 	cpp -DCROSS_TYPES $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
-	dot -Tpng $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-all.png
+	dot -T$(subst .,,$(suffix $@)) $(BUILD_DIR)/graphviz-build.dot > $@
 
-$(BUILD_DIR)/btcr-state-diagram-all.svg: DIAGRAM_SELECTOR = DIAGRAM_ALL
-$(BUILD_DIR)/btcr-state-diagram-all.svg: btcr-state-diagram-all.dot Makefile
-	mkdir -p $(BUILD_DIR)
-	cpp -DCROSS_TYPES $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
-	dot -Tsvg $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-all.svg
-
-$(BUILD_DIR)/btcr-state-diagram-simple.png: DIAGRAM_SELECTOR = DIAGRAM_SIMPLE
-$(BUILD_DIR)/btcr-state-diagram-simple.png: btcr-state-diagram-all.dot Makefile
-	mkdir -p $(BUILD_DIR)
-	cpp $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
-	dot -Tpng $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-simple.png
-
-$(BUILD_DIR)/btcr-state-diagram-simple.svg: DIAGRAM_SELECTOR = DIAGRAM_SIMPLE
-$(BUILD_DIR)/btcr-state-diagram-simple.svg: btcr-state-diagram-all.dot Makefile
+# Set DIAGRAM_SELECTOR.
+#   A cpp #define passed in through $(DIAGRAM_SELECTOR) slices up the source.
+#   However, no % variable remains defined after the rule's ":".
+#   We elaborately extract the match for % exactly as used in the rule match:
+#     $(patsubst $(TARGET_PREFIX)%$(suffix $@),%,$@)
+#   Then upcase.
+$(BUILD_DIR)/btcr-state-diagram-%.png: btcr-state-diagram-all.dot
+	$(eval DIAGRAM_SELECTOR := DIAGRAM_$(shell echo $(patsubst $(TARGET_PREFIX)%$(suffix $@),%,$@) | tr 'a-z' 'A-Z'))
 	mkdir -p $(BUILD_DIR)
 	cpp $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
-	dot -Tsvg $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-simple.svg
+	dot -T$(subst .,,$(suffix $@)) $(BUILD_DIR)/graphviz-build.dot > $@
 
-$(BUILD_DIR)/btcr-state-diagram-recovery.png: DIAGRAM_SELECTOR = DIAGRAM_RECOVERY
-$(BUILD_DIR)/btcr-state-diagram-recovery.png: btcr-state-diagram-all.dot Makefile
+# Copy and paste (!!) general png rule for svg, since multiple targets fails.
+#   Only necessary with a % match in the targets (i.e. not for "all", above).
+#   Else, make believed svg target already existed after making png. (BUG?)
+$(BUILD_DIR)/btcr-state-diagram-%.svg: btcr-state-diagram-all.dot
+	$(eval DIAGRAM_SELECTOR := DIAGRAM_$(shell echo $(patsubst $(TARGET_PREFIX)%$(suffix $@),%,$@) | tr 'a-z' 'A-Z'))
 	mkdir -p $(BUILD_DIR)
 	cpp $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
-	dot -Tpng $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-recovery.png
-
-$(BUILD_DIR)/btcr-state-diagram-recovery.svg: DIAGRAM_SELECTOR = DIAGRAM_RECOVERY
-$(BUILD_DIR)/btcr-state-diagram-recovery.svg: btcr-state-diagram-all.dot Makefile
-	mkdir -p $(BUILD_DIR)
-	cpp $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
-	dot -Tsvg $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-recovery.svg
-
-$(BUILD_DIR)/btcr-state-diagram-key.png: DIAGRAM_SELECTOR = DIAGRAM_KEY
-$(BUILD_DIR)/btcr-state-diagram-key.png: btcr-state-diagram-all.dot Makefile
-	mkdir -p $(BUILD_DIR)
-	cpp $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
-	dot -Tpng $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-key.png
-
-$(BUILD_DIR)/btcr-state-diagram-key.svg: DIAGRAM_SELECTOR = DIAGRAM_KEY
-$(BUILD_DIR)/btcr-state-diagram-key.svg: btcr-state-diagram-all.dot Makefile
-	mkdir -p $(BUILD_DIR)
-	cpp $(CPPFLAGS) btcr-state-diagram-all.dot > $(BUILD_DIR)/graphviz-build.dot
-	dot -Tsvg $(BUILD_DIR)/graphviz-build.dot > $(BUILD_DIR)/btcr-state-diagram-key.svg
+	dot -T$(subst .,,$(suffix $@)) $(BUILD_DIR)/graphviz-build.dot > $@
