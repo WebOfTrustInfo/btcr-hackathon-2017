@@ -60,7 +60,9 @@ $(BUILD_DIR)/btcr-state-diagram-%.png: btcr-state-diagram-all.dot
 
 # Copy and paste (!!) general png rule for svg, since multiple targets fails.
 #   Only necessary with a % match in the targets (i.e. not for "all", above).
-#   Else, make believed svg target already existed after making png. (BUG?)
+#   Else, make believed "Nothing to be done for" svg target,
+#     after making png target  ...but only during a single invocation.
+#     Later invocations built the target.  (BUG)
 $(BUILD_DIR)/btcr-state-diagram-%.svg: btcr-state-diagram-all.dot
 	$(eval DIAGRAM_SELECTOR := DIAGRAM_$(shell echo $(patsubst $(TARGET_PREFIX)%$(suffix $@),%,$@) | tr 'a-z' 'A-Z'))
 	mkdir -p $(BUILD_DIR)
