@@ -44,7 +44,41 @@ A secondary intent of the BTCR method is to serve as a very conservative, very s
 
 Some aspects of the BTCR method will not be practical if inappropriately scaled — for instance, there is a transaction cost to update keys and DDO object, potential UTXO inflation (i.e. one additional unspent output for every BTCR-based identity), and even if segwit isn't used it could cause blockchain bloat. However, identities using the BTCR method can be a strong as Bitcoin itself -- currently securing billions of dollars of digital value.
 
-## Prototypes
+## Results
+
+### Insights on DID spec
+
+[Original version by @christophera](https://lists.w3.org/Archives/Public/public-credentials/2017Jul/0018.html). Minor updates/revisions by @kimdhamilton
+
+At last fall's #RebootingWebOfTrust after working on it for about a year, wecame up with an initial first implementors spec for DIDs. It was published last winter at https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-fall2016/blob/master/final-documents/did-implementer-draft-10.pdf. Two weeks ago, Manu team refactored that document for us to consider in the W3C Credentials WG as a work item: https://opencreds.github.io/did-spec/  
+
+This week we attempted to implement the DID spec for use in the bitcoin based BTCR method as part of the BTCR Hackathon: https://github.com/WebOfTrustInfo/btcr-hackathon
+
+The good news is that we have a number of functioning verifiable and confirmable self-sovereign DID identifiers, a number of real examples of verifiable DDOs, as well as some sample Verified Claims properly signed by bitcoin keys that can be proven to be issued by the DDO which can prove that it has exclusive update rights to the DID identifer. All good news.
+
+However, we ran into a number of issues with the first implementors draft of the DID spec.
+
+I’ve written up some initial insights and thoughts [https://github.com/opencreds/did-spec/issues/4#issuecomment-315449659](https://github.com/opencreds/did-spec/issues/4#issuecomment-315449659) of what we learned about the DID spec. The hackathon team created individual issues (listed in "What's next" below), and here is the summary:
+
+
+Personally I think owner and control need to be completely refactored and renamed. Both terms are repeatedly not working and are being confused. (In addition, a number of parts of the spec maybe should be moved the the Sovrin Method instead of being in the DID spec.)
+
+Insights:
+
+- We should rarely talk about keys, but instead proofs, of which a signature using a key is only one kind of proof (but very common). See: [WebOfTrustInfo/btcr-hackathon#39](https://github.com/WebOfTrustInfo/btcr-hackathon/issues/39)
+- The DDO object may in fact be composed of multiple parts, with different parts having different proofs. See: [WebOfTrustInfo/btcr-hackathon#37](https://github.com/WebOfTrustInfo/btcr-hackathon/issues/37)
+- The first part of the DDO may be deterministic based on the root of trust transaction (and in BTCR is in effect "signed" or "proven" by the "SatoshiBlockchainSignature" or "SatoshiBlockchainProof". See example at [WebOfTrustInfo/btcr-hackathon#37(comment)](https://github.com/WebOfTrustInfo/btcr-hackathon/issues/37#issuecomment-315289776)
+- We may even want to go back to all the JSON-LD signature schemas and replace the semantics consistent as proofs rather than signatures.
+- If there is a link from the deterministic DDO to the extended DDO (in BTCR the OP_RETURN pointer), we maybe should allow that to continue to be extended (especially useful the IPFS case). We need a better name for these links. See [WebOfTrustInfo/btcr-hackathon#40](https://github.com/WebOfTrustInfo/btcr-hackathon/issues/40)
+- Additional parts must be proven by the owner proof (typically a key) and likely in effect are self-signed verifiable claims that extend the deterministic DDO: see [WebOfTrustInfo/btcr-hackathon#8](https://github.com/WebOfTrustInfo/btcr-hackathon/issues/8)
+   — This is particular important in some cases like IPFS and some future multisig possibilities where you can't put the DID identifier or proof into the DDO as you have to confirm the transaction in order to get that value — a catch 22. Instead, the IPFS record extends the deterministic DDO with additional values, and doesn't have to have the DID identifier or DID proof as they come from the deterministically created root part of the DDO.
+- The owner list is overloaded. It should only be for associating any additional DDO parts or updates with the the DID root of trust transaction. See: [WebOfTrustInfo/btcr-hackathon#38](https://github.com/WebOfTrustInfo/btcr-hackathon/issues/38)
+- We need a separate list of proofs (which are typically keys) that are allowed to issue claims under this DID, which may include (or not) an owner proof. In the BTCR case, the owner proof is always a key, and it always is also an issuer key. See: [WebOfTrustInfo/btcr-hackathon#38](https://github.com/WebOfTrustInfo/btcr-hackathon/issues/38)
+- We have some better understanding of the roles of [WebOfTrustInfo/btcr-hackathon#33](https://github.com/WebOfTrustInfo/btcr-hackathon/issues/33) and in particular the short summary at [WebOfTrustInfo/btcr-hackathon#33 (comment)](https://github.com/WebOfTrustInfo/btcr-hackathon/issues/33#issuecomment-314608959)
+- Rather than using control proofs for revocation, this may need to be a separate list of proofs also. This is our same problem with overloading owner. See more thoughts on revocation starting at [WebOfTrustInfo/btcr-hackathon#33 (comment)](https://github.com/WebOfTrustInfo/btcr-hackathon/issues/33#issuecomment-314618077)
+
+
+### Prototypes
 
 We implemented Tx Ref conversion to txids (and back) in the following repos:
 - [https://github.com/WebOfTrustInfo/txref-conversion-js](https://github.com/WebOfTrustInfo/txref-conversion-js)
