@@ -44,6 +44,25 @@ A secondary intent of the BTCR method is to serve as a very conservative, very s
 
 Some aspects of the BTCR method will not be practical if inappropriately scaled — for instance, there is a transaction cost to update keys and DDO object, potential UTXO inflation (i.e. one additional unspent output for every BTCR-based identity), and even if segwit isn't used it could cause blockchain bloat. However, identities using the BTCR method can be a strong as Bitcoin itself -- currently securing billions of dollars of digital value.
 
+## Prototypes
+
+We implemented Tx Ref conversion to txids (and back) in the following repos:
+- [https://github.com/WebOfTrustInfo/txref-conversion-js](https://github.com/WebOfTrustInfo/txref-conversion-js)
+- [https://github.com/WebOfTrustInfo/txref-conversion-java](https://github.com/WebOfTrustInfo/txref-conversion-java)
+- [https://github.com/WebOfTrustInfo/txref-conversion-python](https://github.com/WebOfTrustInfo/txref-conversion-python)
+
+BTCR Playground for experimenting with and visualizing BTCRs:
+- [https://github.com/WebOfTrustInfo/btcr-tx-playground.github.io](https://github.com/WebOfTrustInfo/btcr-tx-playground.github.io)
+- [https://github.com/WebOfTrustInfo/btcr-did-tools-js](https://github.com/WebOfTrustInfo/btcr-did-tools-js)
+
+
+## What's next
+We've moved all open issues to the following repos:
+- [DID spec](https://github.com/w3c-ccg/did-spec/issues) - DID spec-related issues
+- [RWoT fall 2017](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-fall2017) - Follow-up prototyping
+- [VC Data Model](https://github.com/w3c/vc-data-model/issues) - Issues specific to Verifiable Claims data model
+- [BTCR Playground Issues](https://github.com/WebOfTrustInfo/btcr-tx-playground.github.io) - Enhancements to BTCR playground tool
+
 ## References
 - [DID (Decentralized Identifier) Data Model and Generic Syntax 1.0 Implementer’s Draft 01](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-fall2016/blob/master/draft-documents/DID-Spec-Implementers-Draft-01.pdf)
 - [DID Method Specifications / BTCR and PGPR](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-spring2017/blob/master/event-documents/group-abstracts/btcr-did-method-spec.md) (only outline so far)
