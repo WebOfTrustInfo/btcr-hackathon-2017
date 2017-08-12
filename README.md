@@ -48,7 +48,7 @@ Some aspects of the BTCR method will not be practical if inappropriately scaled 
 
 ### Insights on DID spec
 
-[Original version by @christophera](https://lists.w3.org/Archives/Public/public-credentials/2017Jul/0018.html). Minor updates/revisions by @kimdhamilton
+[Original version of this section by @christophera](https://lists.w3.org/Archives/Public/public-credentials/2017Jul/0018.html). Minor updates/revisions by @kimdhamilton
 
 At last fall's #RebootingWebOfTrust after working on it for about a year, wecame up with an initial first implementors spec for DIDs. It was published last winter at https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust-fall2016/blob/master/final-documents/did-implementer-draft-10.pdf. Two weeks ago, Manu team refactored that document for us to consider in the W3C Credentials WG as a work item: https://opencreds.github.io/did-spec/  
 
